@@ -1,0 +1,81 @@
+/* ==========================================
+   CARD BASE
+========================================== */
+
+.card {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+
+  transition: all 0.35s ease;
+
+  overflow: hidden;
+
+  position: relative;
+}
+
+/* ==========================================
+   CARD PADDING
+========================================== */
+
+.card-small {
+  padding: 20px;
+}
+
+.card-medium {
+  padding: 30px;
+}
+
+.card-large {
+  padding: 40px;
+}
+
+/* ==========================================
+   HOVER
+========================================== */
+
+.card-hover:hover {
+  transform: translateY(-10px);
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 20px 50px rgba(37, 99, 235, 0.12),
+    0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* ==========================================
+   CLICKABLE
+========================================== */
+
+.card-hover {
+  cursor: pointer;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width:768px){
+
+.card-medium{
+padding:24px;
+}
+
+.card-large{
+padding:30px;
+}
+
+}
+
+@media (max-width:480px){
+
+.card-small,
+.card-medium,
+.card-large{
+
+padding:20px;
+
+}
+
+}

@@ -1,0 +1,397 @@
+/* ===========================
+   AI PAGE
+=========================== */
+
+.ai-page{
+    min-height:100vh;
+    background:#f4f8fc;
+    padding:120px 20px 60px;
+}
+
+.ai-container{
+    max-width:900px;
+    margin:auto;
+}
+
+.ai-container h1{
+    text-align:center;
+    color:#1565c0;
+    margin-bottom:30px;
+    font-size:36px;
+    font-weight:700;
+}
+
+/* ===========================
+   CHAT BOX
+=========================== */
+
+.chat-box{
+    height:550px;
+    overflow-y:auto;
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+
+    display:flex;
+    flex-direction:column;
+
+    gap:16px;
+}
+
+/* ===========================
+   BOT MESSAGE
+=========================== */
+
+.bot-message{
+
+    align-self:flex-start;
+
+    background:#eef5ff;
+
+    color:#222;
+
+    padding:16px 18px;
+
+    border-radius:18px;
+
+    max-width:75%;
+
+    white-space:pre-wrap;
+
+    line-height:1.7;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.06);
+
+}
+
+/* ===========================
+   USER MESSAGE
+=========================== */
+
+.user-message{
+
+    align-self:flex-end;
+
+    background:#1565c0;
+
+    color:#fff;
+
+    padding:16px 18px;
+
+    border-radius:18px;
+
+    max-width:75%;
+
+    white-space:pre-wrap;
+
+    line-height:1.7;
+
+    box-shadow:0 5px 15px rgba(21,101,192,.20);
+
+}
+
+/* ===========================
+   INPUT AREA
+=========================== */
+
+.chat-input{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:25px;
+
+}
+
+.chat-input input{
+
+    flex:1;
+
+    padding:16px;
+
+    border-radius:10px;
+
+    border:1px solid #d6dce5;
+
+    font-size:16px;
+
+    outline:none;
+
+}
+
+.chat-input input:focus{
+
+    border-color:#1565c0;
+
+}
+
+/* ===========================
+   BUTTON
+=========================== */
+
+.chat-input button{
+
+    background:#1565c0;
+
+    color:#fff;
+
+    border:none;
+
+    padding:0 28px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.chat-input button:hover{
+
+    background:#0d47a1;
+
+}
+
+/* ===========================
+   MOBILE
+=========================== */
+
+@media(max-width:768px){
+
+.chat-box{
+
+    height:420px;
+
+}
+
+.bot-message,
+.user-message{
+
+    max-width:90%;
+
+}
+
+.chat-input{
+
+    flex-direction:column;
+
+}
+
+.chat-input button{
+
+    width:100%;
+
+    height:50px;
+
+}
+
+}/* ===========================
+   AI PAGE
+=========================== */
+
+.ai-page{
+    min-height:100vh;
+    background:#f4f8fc;
+    padding:120px 20px 60px;
+}
+
+.ai-container{
+    max-width:900px;
+    margin:auto;
+}
+
+.ai-container h1{
+    text-align:center;
+    color:#1565c0;
+    margin-bottom:30px;
+    font-size:36px;
+    font-weight:700;
+}
+
+/* ===========================
+   CHAT BOX
+=========================== */
+
+.chat-box{
+    height:550px;
+    overflow-y:auto;
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+
+    display:flex;
+    flex-direction:column;
+
+    gap:16px;
+}
+
+/* ===========================
+   BOT MESSAGE
+=========================== */
+
+.bot-message{
+
+    align-self:flex-start;
+
+    background:#eef5ff;
+
+    color:#222;
+
+    padding:16px 18px;
+
+    border-radius:18px;
+
+    max-width:75%;
+
+    white-space:pre-wrap;
+
+    line-height:1.7;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.06);
+
+}
+
+/* ===========================
+   USER MESSAGE
+=========================== */
+
+.user-message{
+
+    align-self:flex-end;
+
+    background:#1565c0;
+
+    color:#fff;
+
+    padding:16px 18px;
+
+    border-radius:18px;
+
+    max-width:75%;
+
+    white-space:pre-wrap;
+
+    line-height:1.7;
+
+    box-shadow:0 5px 15px rgba(21,101,192,.20);
+
+}
+
+/* ===========================
+   INPUT AREA
+=========================== */
+
+.chat-input{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:25px;
+
+}
+
+.chat-input input{
+
+    flex:1;
+
+    padding:16px;
+
+    border-radius:10px;
+
+    border:1px solid #d6dce5;
+
+    font-size:16px;
+
+    outline:none;
+
+}
+
+.chat-input input:focus{
+
+    border-color:#1565c0;
+
+}
+
+/* ===========================
+   BUTTON
+=========================== */
+
+.chat-input button{
+
+    background:#1565c0;
+
+    color:#fff;
+
+    border:none;
+
+    padding:0 28px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.chat-input button:hover{
+
+    background:#0d47a1;
+
+}
+
+/* ===========================
+   MOBILE
+=========================== */
+
+@media(max-width:768px){
+
+.chat-box{
+
+    height:420px;
+
+}
+
+.bot-message,
+.user-message{
+
+    max-width:90%;
+
+}
+
+.chat-input{
+
+    flex-direction:column;
+
+}
+
+.chat-input button{
+
+    width:100%;
+
+    height:50px;
+
+}
+
+}

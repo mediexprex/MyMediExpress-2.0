@@ -1,0 +1,125 @@
+/* ==========================================
+   SECTION TITLE
+========================================== */
+
+.section-title {
+  margin-bottom: 60px;
+}
+
+.section-center {
+  text-align: center;
+}
+
+.section-left {
+  text-align: left;
+}
+
+.section-right {
+  text-align: right;
+}
+
+/* ==========================================
+   BADGE
+========================================== */
+
+.section-badge {
+  display: inline-block;
+
+  padding: 8px 18px;
+
+  background: #dbeafe;
+
+  color: #2563eb;
+
+  border-radius: 50px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  margin-bottom: 18px;
+}
+
+/* ==========================================
+   TITLE
+========================================== */
+
+.section-heading {
+  font-size: 42px;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  color: #0f172a;
+
+  margin-bottom: 18px;
+}
+
+/* ==========================================
+   DESCRIPTION
+========================================== */
+
+.section-description {
+
+  max-width: 700px;
+
+  color: #64748b;
+
+  line-height: 1.8;
+
+  font-size: 17px;
+}
+
+.section-center .section-description {
+  margin: auto;
+}
+
+.section-right .section-description {
+  margin-left: auto;
+}
+
+/* ==========================================
+   LIGHT VERSION
+========================================== */
+
+.section-light .section-heading {
+  color: #ffffff;
+}
+
+.section-light .section-description {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.section-light .section-badge {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 768px) {
+
+  .section-title {
+    margin-bottom: 40px;
+  }
+
+  .section-heading {
+    font-size: 34px;
+  }
+
+  .section-description {
+    font-size: 16px;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .section-heading {
+    font-size: 28px;
+  }
+
+}

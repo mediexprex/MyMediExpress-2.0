@@ -1,0 +1,278 @@
+/* =====================================================
+   MyMediExpress - My Account Dashboard
+===================================================== */
+
+.myaccount-page{
+
+    min-height:100vh;
+
+    background:linear-gradient(
+        135deg,
+        #eef9ff 0%,
+        #ffffff 50%,
+        #ecfff5 100%
+    );
+
+    padding:40px 20px;
+
+}
+
+.myaccount-container{
+
+    max-width:1200px;
+
+    margin:auto;
+
+}
+
+/* ==========================
+   Header
+========================== */
+
+.account-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    background:#ffffff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.account-avatar{
+
+    font-size:70px;
+
+    color:#0ea5e9;
+
+}
+
+.account-header h2{
+
+    margin:0;
+
+    color:#0f172a;
+
+}
+
+.account-header h3{
+
+    margin:8px 0;
+
+    color:#2563eb;
+
+}
+
+.account-header p{
+
+    color:#64748b;
+
+}
+
+/* ==========================
+   Dashboard Grid
+========================== */
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+    gap:20px;
+
+    margin-bottom:35px;
+
+}
+
+.dashboard-card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:28px;
+
+    text-decoration:none;
+
+    color:#1e293b;
+
+    text-align:center;
+
+    transition:.3s;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 20px 40px rgba(14,165,233,.18);
+
+}
+
+.dashboard-card svg{
+
+    font-size:42px;
+
+    color:#10b981;
+
+    margin-bottom:15px;
+
+}
+
+.dashboard-card h4{
+
+    margin-bottom:10px;
+
+}
+
+.dashboard-card p{
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+/* ==========================
+   Profile Card
+========================== */
+
+.profile-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.profile-card h3{
+
+    margin-bottom:25px;
+
+    color:#0f172a;
+
+}
+
+.profile-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:15px 0;
+
+    border-bottom:1px solid #e5e7eb;
+
+}
+
+.profile-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.profile-item svg{
+
+    color:#0ea5e9;
+
+    font-size:22px;
+
+}
+
+.profile-item span{
+
+    width:100px;
+
+    color:#64748b;
+
+}
+
+.profile-item strong{
+
+    color:#111827;
+
+}
+
+.edit-profile-btn{
+
+    display:inline-block;
+
+    margin-top:30px;
+
+    background:linear-gradient(
+        90deg,
+        #0ea5e9,
+        #10b981
+    );
+
+    color:#fff;
+
+    text-decoration:none;
+
+    padding:12px 28px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.edit-profile-btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media(max-width:768px){
+
+    .account-header{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+    .profile-item{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:8px;
+
+    }
+
+    .profile-item span{
+
+        width:auto;
+
+    }
+
+}

@@ -1,0 +1,122 @@
+/* ==========================================
+   QUICK ORDER
+========================================== */
+
+.quick-order{
+  padding:70px 20px;
+  background:#f8fbff;
+}
+
+.quick-order-container{
+
+  max-width:700px;
+  margin:auto;
+
+  background:#fff;
+
+  padding:40px;
+
+  border-radius:22px;
+
+  text-align:center;
+
+  box-shadow:0 15px 40px rgba(0,0,0,.08);
+}
+
+.quick-order h2{
+
+  font-size:34px;
+
+  color:#0f172a;
+
+  margin-bottom:15px;
+}
+
+.quick-order p{
+
+  color:#64748b;
+
+  margin-bottom:30px;
+}
+
+.quick-order select{
+
+  width:100%;
+
+  padding:16px;
+
+  border-radius:12px;
+
+  border:1px solid #dbe4ea;
+
+  font-size:16px;
+
+  margin-bottom:20px;
+
+  outline:none;
+}
+
+.quick-order select:focus{
+
+  border-color:#2563eb;
+
+  box-shadow:0 0 0 3px rgba(37,99,235,.15);
+}
+
+.quick-order button{
+
+  width:100%;
+
+  padding:16px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:#2563eb;
+
+  color:#fff;
+
+  font-size:17px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:.3s;
+}
+
+.quick-order button:hover{
+
+  background:#1d4ed8;
+
+  transform:translateY(-2px);
+}
+
+.quick-order button:disabled{
+
+  background:#94a3b8;
+
+  cursor:not-allowed;
+
+  transform:none;
+}
+
+@media(max-width:768px){
+
+  .quick-order{
+
+    padding:50px 15px;
+  }
+
+  .quick-order-container{
+
+    padding:25px;
+  }
+
+  .quick-order h2{
+
+    font-size:28px;
+  }
+
+}
