@@ -56,3 +56,14 @@ package-lock.json
 # Environment
 .env
 .env.*
+# Vite Build
+dist/
+
+# Vercel
+.vercel/
+
+# Firebase
+.firebase/
+
+# Cache
+.vite/
