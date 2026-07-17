@@ -1,28 +1,58 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# IntelliJ / Android Studio
+*.iml
+.idea/
+.gradle/
 
-node_modules
-dist
-dist-ssr
-*.local
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub/
+build/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Dart
+.dart_tool/
+.pub-cache/
+
+# Android
+/android/.gradle/
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+
+# macOS
+macos/Pods/
+
+# Windows
+windows/flutter/ephemeral/
+
+# Linux
+linux/flutter/ephemeral/
+
+# Local files
+local.properties
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-# Environment Variables
-.env
 
-.vercel
+# Logs
+*.log
+build_log.txt
+
+# Node / React
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# Archives
+*.zip
+*.rar
+*.7z
+
+# Environment
+.env
+.env.*
