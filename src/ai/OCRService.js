@@ -155,5 +155,16 @@ class OCRService {
   }
 
 }
+// ===================================
+// Named Exports (ScannerOCR Compatibility)
+// ===================================
+
+export async function extractTextFromImage(imageFile) {
+  return await new OCRService().analyzeImage(imageFile);
+}
+
+export async function runOCR(imageFile) {
+  return await new OCRService().analyzeImage(imageFile);
+}
 
 export default new OCRService();

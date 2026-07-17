@@ -1,189 +1,166 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiDroplet,
+  FiPlus,
+  FiZap,
+  FiInfo,
+  FiTrendingUp,
+  FiTarget,
+  FiTrash2,
+  FiChevronRight,
+  FiClock,
+} from "react-icons/fi";
+import { History } from "lucide-react";
 import { db, auth } from "../../firebase/config";
 import {
   collection,
   addDoc,
   query,
   where,
+  orderBy,
   onSnapshot,
+  deleteDoc,
+  doc,
   serverTimestamp,
 } from "firebase/firestore";
 
-export default function WaterTracker() {
-  const [water, setWater] = useState(0);
-  const [customAmount, setCustomAmount] = useState("");
+import "../../styles/waterTracker.css";
+
+const WaterTracker = () => {
+  const [totalIntake, setTotalIntake] = useState(0);
+  const [logs, setLogs] = useState([]);
+  const [goal, setGoal] = useState(2500);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const target = 2000;
-
-  const getTodayDate = () => {
-    return new Date().toISOString().split("T")[0];
-  };
 
   useEffect(() => {
-    if (!auth.currentUser) {
-      setLoading(false);
-      return;
-    }
-
+    if (!auth.currentUser) return;
+    const today = new Date().toISOString().split("T")[0];
     const q = query(
       collection(db, "water_logs"),
       where("userId", "==", auth.currentUser.uid),
-      where("date", "==", getTodayDate())
+      where("date", "==", today),
+      orderBy("createdAt", "desc")
     );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        let total = 0;
-
-        snapshot.forEach((doc) => {
-          total += doc.data().amount || 0;
-        });
-
-        setWater(total);
-        setLoading(false);
-      },
-      (err) => {
-        console.error(err);
-        setError("Unable to load water data.");
-        setLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let total = 0;
+      const historyItems = [];
+      snapshot.forEach((doc) => {
+        const data = { id: doc.id, ...doc.data() };
+        total += data.amount;
+        historyItems.push(data);
+      });
+      setTotalIntake(total);
+      setLogs(historyItems);
+      setLoading(false);
+    });
+    return unsubscribe;
   }, []);
 
-  const handleAddWater = async (amount) => {
-    const value = parseInt(amount);
-
-    if (isNaN(value) || value <= 0) return;
-
-    if (!auth.currentUser) {
-      alert("Please login first.");
-      return;
-    }
-
+  const addIntake = async (amount) => {
     try {
-      setError("");
-
       await addDoc(collection(db, "water_logs"), {
         userId: auth.currentUser.uid,
-        amount: value,
-        date: getTodayDate(),
+        amount,
+        date: new Date().toISOString().split("T")[0],
         createdAt: serverTimestamp(),
       });
-
-      setCustomAmount("");
-    } catch (err) {
-      console.error(err);
-      setError("Failed to save water log.");
-    }
+    } catch (error) { console.error(error); }
   };
 
-  const progress = Math.min((water / target) * 100, 100);
+  const deleteLog = async (id) => {
+    await deleteDoc(doc(db, "water_logs", id));
+  };
+
+  const progress = Math.min((totalIntake / goal) * 100, 100);
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow border border-slate-200 p-6">
+    <div className="water-tracker-page">
+      <div className="water-container">
 
-      <h2 className="text-2xl font-bold text-center mb-2">
-        💧 Water Tracker
-      </h2>
+        <header className="water-header">
+          <h1><FiDroplet /> Hydro<span>Track</span> AI</h1>
+          <div className="goal-pill">
+            <span>Daily Goal</span>
+            <strong>{goal}ml</strong>
+            <button className="btn-edit">Edit</button>
+          </div>
+        </header>
 
-      <p className="text-center text-gray-500 mb-5">
-        Daily Goal: {target} ml
-      </p>
+        <section className="hydration-hero">
 
-      {loading && (
-        <div className="text-center text-blue-600 mb-3">
-          Loading...
-        </div>
-      )}
+          <div className="progress-card">
+            <div className="water-circle-wrap">
+              <svg className="water-circle-svg">
+                <circle cx="50%" cy="50%" r="45%" className="circle-bg" />
+                <motion.circle
+                  cx="50%" cy="50%" r="45%"
+                  className="circle-progress"
+                  initial={{ strokeDasharray: "0 1000" }}
+                  animate={{ strokeDasharray: `${progress * 2.83} 1000` }}
+                />
+              </svg>
+              <div className="circle-inner">
+                <span className="percent-text">{Math.round(progress)}%</span>
+                <span className="volume-text">{totalIntake}ml</span>
+              </div>
+            </div>
 
-      {error && (
-        <div className="bg-red-100 text-red-700 rounded-lg p-3 mb-3 text-sm">
-          {error}
-        </div>
-      )}
+            <div className="quick-add-grid">
+              {[250, 500, 1000].map(amt => (
+                <button key={amt} className="btn-add-water" onClick={() => addIntake(amt)}>
+                  <FiPlus className="add-icon" />
+                  <span>{amt}ml</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
-      <div className="mb-5">
+          <div className="ai-hydration-card">
+            <div className="ai-icon-wrap"><FiZap /></div>
+            <h4>Hydration AI Insight</h4>
+            <p>
+              {progress < 30 ? "Significant hydration deficit detected. Your cognitive clarity may be impacted. Drink 500ml now." :
+               progress < 70 ? "Stable hydration progress. Maintaining consistent water intake will help stabilize metabolism." :
+               "Optimal hydration reached. Your physical performance is supported by peak cellular hydration levels."}
+            </p>
+            <div style={{ marginTop: '40px', padding: '20px', background: 'rgba(255,255,255,0.05)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>
+               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <FiTarget style={{ color: '#10B981' }} />
+                  <span style={{ fontSize: '13px', fontWeight: '800' }}>Next Milestone: 3000ml</span>
+               </div>
+            </div>
+          </div>
 
-        <div className="flex justify-between mb-2">
-          <span>Today's Intake</span>
-          <strong>{water} ml</strong>
-        </div>
+        </section>
 
-        <div className="w-full bg-gray-200 rounded-full h-4">
-
-          <div
-            className="bg-blue-500 h-4 rounded-full transition-all duration-500"
-            style={{
-              width: `${progress}%`,
-            }}
-          />
-
-        </div>
-
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 mb-5">
-
-        <button
-          onClick={() => handleAddWater(250)}
-          className="bg-blue-500 text-white rounded-lg py-3 font-semibold hover:bg-blue-600"
-        >
-          +250 ml
-        </button>
-
-        <button
-          onClick={() => handleAddWater(500)}
-          className="bg-green-500 text-white rounded-lg py-3 font-semibold hover:bg-green-600"
-        >
-          +500 ml
-        </button>
-
-      </div>
-
-      <div className="flex gap-2">
-
-        <input
-          type="number"
-          placeholder="Custom ml"
-          value={customAmount}
-          onChange={(e) => setCustomAmount(e.target.value)}
-          className="flex-1 border rounded-lg px-3 py-2"
-        />
-
-        <button
-          onClick={() => handleAddWater(customAmount)}
-          className="bg-indigo-600 text-white px-5 rounded-lg hover:bg-indigo-700"
-        >
-          Add
-        </button>
-
-      </div>
-
-      <div className="mt-6 bg-slate-50 rounded-lg p-4">
-
-        <h3 className="font-semibold mb-2">
-          AI Hydration Insight
-        </h3>
-
-        <p className="text-sm text-gray-600">
-          {water < 1000 &&
-            "💧 Drink more water to stay hydrated."}
-
-          {water >= 1000 &&
-            water < 1800 &&
-            "👍 Good progress. Keep drinking water."}
-
-          {water >= 1800 &&
-            "✅ Excellent! Daily hydration goal almost achieved."}
-        </p>
+        <section className="logs-section">
+          <div className="logs-header">
+            <h2 style={{ fontWeight: 900, fontSize: '24px' }}>Log History</h2>
+            <FiTrendingUp style={{ color: '#94A3B8' }} />
+          </div>
+          <div className="logs-list">
+            {logs.map(log => (
+              <div key={log.id} className="log-item">
+                <div className="log-info">
+                  <div className="log-icon"><FiDroplet /></div>
+                  <div>
+                    <span className="log-amount">{log.amount} ml</span>
+                    <p className="log-time">{new Date(log.createdAt?.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                  </div>
+                </div>
+                <button className="btn-delete-log" onClick={() => deleteLog(log.id)}>
+                  <FiTrash2 />
+                </button>
+              </div>
+            ))}
+            {logs.length === 0 && <p style={{ textAlign: 'center', padding: '60px', color: '#94A3B8' }}>No logs today.</p>}
+          </div>
+        </section>
 
       </div>
-
     </div>
   );
-}
+};
+
+export default WaterTracker;

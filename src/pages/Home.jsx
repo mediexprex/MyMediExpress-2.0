@@ -4,6 +4,7 @@ import Services from "../components/home/Services";
 import Features from "../components/home/Features";
 import HowItWorks from "../components/home/HowItWorks";
 import AISection from "../components/home/AISection";
+import AIHealthHub from "../components/home/AIHealthHub";
 import Stats from "../components/home/Stats";
 import Testimonials from "../components/home/Testimonials";
 import DownloadApp from "../components/home/DownloadApp";
@@ -13,20 +14,21 @@ import QuickOrder from "../components/home/QuickOrder";
 
 function Home() {
   return (
-<>
-  <Hero />
-  <QuickOrder />
-<QuickActions />
-  <Services />
-  <Features />
-  <HowItWorks />
-  <AISection />
-  <Stats />
-  <Testimonials />
-  <DownloadApp />
-  <FAQ />
-  <Contact />
-</>
+    <>
+      <Hero />
+      <QuickOrder />
+      <QuickActions />
+      <AIHealthHub />
+      <Services />
+      <Features />
+      <HowItWorks />
+      <AISection />
+      <Stats />
+      <Testimonials />
+      <DownloadApp />
+      <FAQ />
+      <Contact />
+    </>
   );
 }
 

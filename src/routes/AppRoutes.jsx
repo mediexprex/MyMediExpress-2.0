@@ -54,50 +54,101 @@ function AppRoutes() {
         {/* ---------- Public Routes ---------- */}
 
         <Route path="/" element={<Home />} />
-
         <Route path="/about" element={<About />} />
-
         <Route path="/services" element={<Services />} />
-
         <Route path="/track-order" element={<TrackOrder />} />
-
         <Route path="/contact" element={<Contact />} />
-
-        <Route
-          path="/privacy-policy"
-          element={<PrivacyPolicy />}
-        />
-<Route
-  path="/health-dashboard"
-  element={
-    <UserProtectedRoute>
-      <AIDashboard />
-    </UserProtectedRoute>
-  }
-/>
-
-        <Route
-          path="/terms-conditions"
-          element={<TermsConditions />}
-        />
-
-        <Route
-          path="/ai-assistant"
-          element={<AIAssistant />}
-        />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-conditions" element={<TermsConditions />} />
+        <Route path="/ai-assistant" element={<AIAssistant />} />
 
         {/* ---------- Authentication ---------- */}
 
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        {/* ---------- Protected AI Routes ---------- */}
 
         <Route
-          path="/register"
-          element={<Register />}
+          path="/ai-dashboard"
+          element={
+            <UserProtectedRoute>
+              <AIDashboard />
+            </UserProtectedRoute>
+          }
         />
 
         <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
+          path="/scanner-ocr"
+          element={
+            <UserProtectedRoute>
+              <ScannerOCR />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/lab-report-ai"
+          element={
+            <UserProtectedRoute>
+              <LabReportAI />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/medicine-reminder"
+          element={
+            <UserProtectedRoute>
+              <MedicineReminder />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/water-tracker"
+          element={
+            <UserProtectedRoute>
+              <WaterTracker />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/food-tracker"
+          element={
+            <UserProtectedRoute>
+              <FoodTracker />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/symptom-tracker"
+          element={
+            <UserProtectedRoute>
+              <SymptomTracker />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/health-timeline"
+          element={
+            <UserProtectedRoute>
+              <HealthTimeline />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/body-3d"
+          element={
+            <UserProtectedRoute>
+              <BodyVisualizer3D />
+            </UserProtectedRoute>
+          }
         />
 
         {/* ---------- Protected User Routes ---------- */}

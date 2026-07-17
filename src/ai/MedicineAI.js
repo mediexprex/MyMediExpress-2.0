@@ -264,5 +264,15 @@ class MedicineAI {
   }
 
 }
+// ===================================
+// Named Exports (ScannerOCR Compatibility)
+// ===================================
 
+export async function analyzeMedicine(text) {
+  return await GeminiService.analyzeMedicine(text);
+}
+
+export async function processMedicine(imageFile) {
+  return await new MedicineAI().processMedicine(imageFile);
+}
 export default new MedicineAI();

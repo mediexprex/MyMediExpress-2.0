@@ -1,547 +1,324 @@
-import React, { useState, useEffect } from "react";
-import { auth, db, storage } from "../../firebase/config";
-
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
-
-import {
-  collection,
-  addDoc,
-  query,
- where,
- orderBy,
- onSnapshot,
-  serverTimestamp,
-} from "firebase/firestore";
-
-export default function LabReportAI() {
-
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const [previewURL, setPreviewURL] = useState("");
-
-  const [uploading, setUploading] = useState(false);
-
-  const [loading, setLoading] = useState(true);
-
-  const [error, setError] = useState("");
-
-  const [reports, setReports] = useState([]);
-
-  const [aiSummary, setAiSummary] = useState("");
-
-  const [uploadProgress, setUploadProgress] = useState(0);
-
-  // -----------------------------
-  // File Selection
-  // -----------------------------
-
-  const handleFileSelect = (e) => {
-
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    const allowedTypes = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-
-      setError(
-        "Only PDF, JPG, PNG and WEBP files are supported."
-      );
-
-      return;
-    }
-
-    setError("");
-
-    setSelectedFile(file);
-
-    if (file.type.startsWith("image")) {
-
-      setPreviewURL(URL.createObjectURL(file));
-
-    } else {
-
-      setPreviewURL("");
-
-    }
-  };
-
-  // -----------------------------
-  // Upload Report
-  // -----------------------------
-
-  const uploadReport = async () => {
-
-    if (!selectedFile) {
-
-      alert("Please select a report.");
-
-      return;
-    }
-
-    if (!auth.currentUser) {
-
-      alert("Please login first.");
-
-      return;
-    }
-
-    try {
-
-      setUploading(true);
-
-      setUploadProgress(20);
-
-      const fileName =
-        Date.now() + "_" + selectedFile.name;
-
-      const storageRef = ref(
-        storage,
-        `lab_reports/${auth.currentUser.uid}/${fileName}`
-      );
-
-      await uploadBytes(storageRef, selectedFile);
-
-      setUploadProgress(70);
-
-      const downloadURL =
-        await getDownloadURL(storageRef);
-
-      await addDoc(collection(db, "lab_reports"), {
-
-        userId: auth.currentUser.uid,
-
-        fileName: selectedFile.name,
-
-        fileType: selectedFile.type,
-
-        reportURL: downloadURL,
-
-        status: "Uploaded",
-
-        aiStatus: "Pending",
-
-        createdAt: serverTimestamp(),
-
-      });
-
-      setUploadProgress(100);
-
-      setAiSummary(
-        "Report uploaded successfully. AI analysis will be available in the next step."
-      );
-
-      setSelectedFile(null);
-
-      setPreviewURL("");
-
-      setTimeout(() => {
-
-        setUploadProgress(0);
-
-        setUploading(false);
-
-      }, 1000);
-
-    } catch (err) {
-
-      console.error(err);
-
-      setUploading(false);
-
-      setError("Failed to upload report.");
-
-    }
-
-  };
-  // -----------------------------
-  // Load Reports (Realtime)
-  // -----------------------------
-
+  FiFileText, FiUploadCloud, FiActivity, FiShield,
+  FiAlertCircle, FiCheckCircle, FiInfo, FiTrash2,
+  FiDownload, FiArrowLeft, FiPrinter, FiZap, FiDatabase
+} from "react-icons/fi";
+import LabReportService from "../../ai/LabReportService";
+import "../../styles/labReport.css";
+
+const LabReportAI = () => {
+  const [file, setFile] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState({ step: "", percent: 0 });
+  const [analysis, setAnalysis] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [error, setError] = useState(null);
+
+  const fileInputRef = useRef(null);
+
+  // Load History on Mount
   useEffect(() => {
-
-    if (!auth.currentUser) {
-      setLoading(false);
-      return;
-    }
-
-    const q = query(
-      collection(db, "lab_reports"),
-      where("userId", "==", auth.currentUser.uid),
-      orderBy("createdAt", "desc")
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-
-        const list = [];
-
-        snapshot.forEach((doc) => {
-
-          list.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-
-        });
-
-        setReports(list);
-
-        setLoading(false);
-
-      },
-      (err) => {
-
-        console.error(err);
-
-        setError("Unable to load reports.");
-
-        setLoading(false);
-
-      }
-    );
-
-    return () => unsubscribe();
-
+    fetchHistory();
   }, []);
 
-  // -----------------------------
-  // Preview Report
-  // -----------------------------
-
-  const openReport = (url) => {
-
-    window.open(url, "_blank");
-
+  const fetchHistory = async () => {
+    const data = await LabReportService.getHistory();
+    setHistory(data);
   };
 
-  // -----------------------------
-  // AI Mock Analysis
-  // (Gemini Integration in Next Step)
-  // -----------------------------
+  // Drag and Drop Handlers
+  const handleDrag = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setIsDragging(true);
+    } else if (e.type === "dragleave") {
+      setIsDragging(false);
+    }
+  }, []);
 
-  const analyzeReport = async (report) => {
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processSelectedFile(e.dataTransfer.files[0]);
+    }
+  }, []);
 
-    setAiSummary("Analyzing report using AI...");
-
-    await new Promise((resolve) =>
-      setTimeout(resolve, 2000)
-    );
-
-    setAiSummary(`
-🩺 AI Health Summary
-
-• Report appears successfully uploaded.
-
-• No critical abnormalities detected from metadata.
-
-• Detailed AI analysis will be available after Gemini OCR integration.
-
-• Future version will automatically identify:
-   ✔ Blood Sugar
-   ✔ Hemoglobin
-   ✔ Cholesterol
-   ✔ Liver Function
-   ✔ Kidney Function
-   ✔ Thyroid
-   ✔ Vitamin Levels
-
-Recommendation:
-
-Please consult your physician for final diagnosis.
-`);
-
+  const onFileSelect = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      processSelectedFile(e.target.files[0]);
+    }
   };
 
-  // -----------------------------
-  // Health Score (Temporary)
-  // -----------------------------
+  const processSelectedFile = (selectedFile) => {
+    setError(null);
+    const validTypes = ["application/pdf", "image/png", "image/jpeg", "image/jpg"];
+    if (!validTypes.includes(selectedFile.type)) {
+      setError("Unsupported file format. Please upload PDF or Images.");
+      return;
+    }
+    setFile(selectedFile);
+    setAnalysis(null);
+  };
 
-  const healthScore = reports.length
-    ? 92
-    : 0;
+  // Start Processing
+  const startProcessing = async () => {
+    if (!file) return;
+    setLoading(true);
+    setError(null);
 
-  const scoreColor =
-    healthScore >= 85
-      ? "text-green-600"
-      : healthScore >= 60
-      ? "text-yellow-600"
-      : "text-red-600";
+    const result = await LabReportService.processReport(file, (p) => setProgress(p));
+
+    if (result.success) {
+      setAnalysis(result.data.analysis);
+      fetchHistory(); // Refresh history
+    } else {
+      setError(result.error);
+    }
+    setLoading(false);
+    setProgress({ step: "", percent: 0 });
+  };
+
+  const handleDelete = async (reportId, storagePath) => {
+    if (!window.confirm("Permanent delete this report?")) return;
+    try {
+      await LabReportService.deleteReport(reportId, storagePath);
+      setHistory(prev => prev.filter(item => item.id !== reportId));
+      if (analysis && analysis.id === reportId) setAnalysis(null);
+    } catch (e) {
+      setError("Failed to delete report.");
+    }
+  };
+
+  const loadFromHistory = (item) => {
+    setAnalysis(item.analysis);
+    setFile(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const printReport = () => {
+    window.print();
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="lab-report-container animated-fade">
 
-      <div className="max-w-6xl mx-auto">
+      {/* Hero Header */}
+      <header className="lab-hero">
+        <h1>LabReport<span>AI</span></h1>
+        <p>Professional grade biomarker analysis powered by MyMediExpress Intelligence.</p>
+      </header>
 
-        {/* Header */}
+      {/* Main Interface */}
+      <div className="lab-workspace">
 
-        <div className="mb-8">
+        {/* Error Messaging */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="error-box"
+              style={{ background: "#FEE2E2", color: "#B91C1C", padding: "15px", borderRadius: "12px", marginBottom: "20px", fontWeight: "700" }}
+            >
+              <FiAlertCircle style={{ marginRight: "10px" }} /> {error}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-          <h1 className="text-3xl font-bold text-slate-800">
-            🧪 AI Lab Report Analyzer
-          </h1>
-
-          <p className="text-slate-500 mt-2">
-            Upload your Lab Reports and let AI organize your health records.
-          </p>
-
-        </div>
-
-        {/* Loading */}
-
-        {loading && (
-
-          <div className="bg-white rounded-xl shadow p-6 text-center">
-
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent mx-auto"></div>
-
-            <p className="mt-4 text-slate-600">
-              Loading Reports...
-            </p>
-
-          </div>
-
-        )}
-
-        {/* Error */}
-
-        {error && (
-
-          <div className="bg-red-100 border border-red-300 text-red-700 rounded-xl p-4 mb-6">
-
-            {error}
-
-          </div>
-
-        )}
-
-        <div className="grid lg:grid-cols-3 gap-6">
-
-          {/* Upload Card */}
-
-          <div className="lg:col-span-1 bg-white rounded-xl shadow p-6">
-
-            <h2 className="text-xl font-bold mb-5">
-              Upload Report
-            </h2>
-
+        {/* Upload Card */}
+        {!analysis && !loading && (
+          <div
+            className={`upload-card ${isDragging ? "dragging" : ""}`}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current.click()}
+          >
+            <FiUploadCloud className="upload-icon" />
+            <h3>{file ? file.name : "Drag & Drop Laboratory Report"}</h3>
+            <p>PDF, PNG, JPG supported (Max 10MB)</p>
             <input
               type="file"
-              accept=".pdf,image/*"
-              onChange={handleFileSelect}
-              className="w-full border rounded-lg p-3"
+              ref={fileInputRef}
+              onChange={onFileSelect}
+              hidden
+              accept=".pdf, .png, .jpg, .jpeg"
             />
-
-            {previewURL && (
-
-              <img
-                src={previewURL}
-                alt="Preview"
-                className="mt-4 rounded-lg border"
-              />
-
+            {file && (
+              <button
+                className="btn-primary"
+                onClick={(e) => { e.stopPropagation(); startProcessing(); }}
+                style={{ marginTop: "20px" }}
+              >
+                Analyze Biomarkers
+              </button>
             )}
+          </div>
+        )}
 
-            {uploadProgress > 0 && (
+        {/* Loading State */}
+        {loading && (
+          <div className="card-glass score-gauge">
+             <div className="progress-overlay">
+                <FiZap className="upload-icon" style={{ animation: "pulse 1.5s infinite" }} />
+                <h3 style={{ textTransform: "uppercase", letterSpacing: "2px" }}>{progress.step}</h3>
+                <div className="progress-bar-container">
+                  <div className="progress-bar-fill" style={{ width: `${progress.percent}%` }}></div>
+                </div>
+                <p>{progress.percent}% Processed</p>
+             </div>
+          </div>
+        )}
 
-              <div className="mt-5">
+        {/* Results Analysis */}
+        {analysis && !loading && (
+          <div className="results-view">
+            <div className="history-header" style={{ marginBottom: "20px" }}>
+              <button className="btn-details" onClick={() => setAnalysis(null)}>
+                <FiArrowLeft /> Back to Upload
+              </button>
+              <button className="btn-primary" onClick={printReport}>
+                <FiPrinter /> Print Clinical Report
+              </button>
+            </div>
 
-                <div className="flex justify-between text-sm mb-1">
+            <div className="results-grid">
 
-                  <span>Uploading...</span>
-
-                  <span>{uploadProgress}%</span>
-
+              <div className="analysis-main">
+                {/* Patient Summary */}
+                <div className="card-glass">
+                  <h2 className="card-title"><FiFileText /> Clinical Executive Summary</h2>
+                  <p style={{ lineHeight: "1.7", color: "#4B5563" }}>{analysis.patientSummary}</p>
                 </div>
 
-                <div className="bg-gray-200 rounded-full h-3">
-
-                  <div
-                    className="bg-teal-500 h-3 rounded-full transition-all duration-500"
-                    style={{
-                      width: `${uploadProgress}%`,
-                    }}
-                  ></div>
-
+                {/* Abnormal Findings */}
+                <div className="card-glass" style={{ borderLeft: "6px solid var(--lab-danger)" }}>
+                  <h2 className="card-title" style={{ color: "var(--lab-danger)" }}>
+                    <FiAlertCircle /> Abnormal Biomarkers ({analysis.abnormalTests.length})
+                  </h2>
+                  {analysis.abnormalTests.map((test, idx) => (
+                    <div key={idx} className="test-item">
+                      <div className="test-info">
+                        <span className="test-name">{test.name}</span>
+                        <span className="test-value">Value: <strong>{test.value}</strong> | Ref: {test.reference}</span>
+                        <span style={{ fontSize: "12px", color: "var(--lab-danger)", fontWeight: "600", marginTop: "4px" }}>
+                          {test.reason}
+                        </span>
+                      </div>
+                      <span className={`status-badge status-${test.status.toLowerCase()}`}>{test.status}</span>
+                    </div>
+                  ))}
                 </div>
 
-              </div>
-
-            )}
-
-            <button
-              onClick={uploadReport}
-              disabled={uploading}
-              className="mt-6 w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg font-semibold disabled:opacity-60"
-            >
-
-              {uploading
-                ? "Uploading..."
-                : "Upload Report"}
-
-            </button>
-
-          </div>
-
-          {/* Health Score */}
-
-          <div className="bg-white rounded-xl shadow p-6">
-
-            <h2 className="text-xl font-bold mb-5">
-
-              AI Health Score
-
-            </h2>
-
-            <div className="text-center">
-
-              <div className={`text-6xl font-black ${scoreColor}`}>
-
-                {healthScore}
-
-              </div>
-
-              <p className="text-slate-500 mt-2">
-
-                Overall Health Score
-
-              </p>
-
-            </div>
-
-            <div className="mt-8">
-
-              <div className="w-full bg-slate-200 rounded-full h-4">
-
-                <div
-                  className="bg-green-500 h-4 rounded-full"
-                  style={{
-                    width: `${healthScore}%`,
-                  }}
-                ></div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* AI Summary */}
-
-          <div className="bg-white rounded-xl shadow p-6">
-
-            <h2 className="text-xl font-bold mb-5">
-
-              🤖 AI Summary
-
-            </h2>
-
-            <div className="bg-slate-50 rounded-lg p-4 min-h-[220px] whitespace-pre-line text-sm leading-7">
-
-              {aiSummary ||
-
-                "Upload a report to receive AI-generated insights."}
-
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* Report History */}
-
-        <div className="mt-10 bg-white rounded-xl shadow p-6">
-
-          <h2 className="text-2xl font-bold mb-6">
-
-            Previous Reports
-
-          </h2>
-
-          {reports.length === 0 ? (
-
-            <div className="text-slate-500">
-
-              No reports uploaded yet.
-
-            </div>
-
-          ) : (
-
-            <div className="space-y-4">
-
-              {reports.map((report) => (
-
-                <div
-                  key={report.id}
-                  className="border rounded-xl p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4"
-                >
-
-                  <div>
-
-                    <h3 className="font-bold">
-
-                      {report.fileName}
-
-                    </h3>
-
-                    <p className="text-sm text-slate-500">
-
-                      {report.fileType}
-
-                    </p>
-
-                    <p className="text-xs text-slate-400 mt-1">
-
-                      Status : {report.status}
-
-                    </p>
-
+                {/* Normal Markers */}
+                <div className="card-glass" style={{ opacity: 0.8 }}>
+                  <h2 className="card-title"><FiCheckCircle /> Optimal Ranges</h2>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
+                    {analysis.normalTests.map((test, idx) => (
+                      <div key={idx} className="test-item" style={{ marginBottom: 0 }}>
+                        <div className="test-info">
+                          <span className="test-name" style={{ fontSize: "14px" }}>{test.name}</span>
+                          <span className="test-value" style={{ fontSize: "12px" }}>{test.value}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                </div>
+              </div>
 
-                  <div className="flex gap-3">
+              {/* Sidebar: Health Score & Advice */}
+              <aside className="analysis-sidebar">
 
-                    <button
-                      onClick={() =>
-                        openReport(report.reportURL)
-                      }
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
-                    >
-                      Open
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        analyzeReport(report)
-                      }
-                      className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg"
-                    >
-                      Analyze
-                    </button>
-
+                {/* Health Score Gauge */}
+                <div className="card-glass score-gauge">
+                  <h2 className="card-title"><FiActivity /> Health Grade</h2>
+                  <div className="gauge-circle">
+                    <svg className="gauge-svg">
+                      <circle cx="80" cy="80" r="70" className="gauge-bg" />
+                      <circle
+                        cx="80" cy="80" r="70"
+                        className="gauge-fill"
+                        style={{
+                          strokeDasharray: 440,
+                          strokeDashoffset: 440 - (440 * analysis.healthScore) / 100
+                        }}
+                      />
+                    </svg>
+                    <div className="gauge-text">
+                      <span className="gauge-number">{analysis.healthScore}</span>
+                      <span className="gauge-label">Score</span>
+                    </div>
                   </div>
-
+                  <div className={`risk-badge risk-${analysis.overallRisk.toLowerCase()}`}>
+                    {analysis.overallRisk} Risk Level
+                  </div>
                 </div>
 
+                {/* AI Advice */}
+                <div className="card-glass" style={{ marginTop: "24px", background: "var(--lab-bg)" }}>
+                  <h2 className="card-title"><FiShield /> AI Triage Advice</h2>
+                  <p style={{ fontSize: "14px", color: "#64748B", marginBottom: "20px" }}>{analysis.doctorAdvice}</p>
+                  <h4 style={{ fontSize: "12px", textTransform: "uppercase", marginBottom: "10px", color: "var(--lab-primary)" }}>Dietary Interventions</h4>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                    {analysis.dietSuggestions.map((diet, idx) => (
+                      <span key={idx} style={{ background: "white", padding: "5px 10px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", border: "1px solid #E2E8F0" }}>
+                        {diet}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+              </aside>
+            </div>
+          </div>
+        )}
+
+        {/* Clinical History Section */}
+        {!loading && history.length > 0 && (
+          <section className="history-section">
+            <h2 className="card-title"><FiDatabase /> Clinical Audit Trail</h2>
+            <div className="history-grid">
+              {history.map((item) => (
+                <div key={item.id} className="card-glass history-card" onClick={() => loadFromHistory(item)}>
+                  <div className="history-header">
+                    <span className="history-date">{new Date(item.createdAt?.seconds * 1000).toLocaleDateString()}</span>
+                    <button className="btn-delete" onClick={(e) => { e.stopPropagation(); handleDelete(item.id, item.storagePath); }}>
+                      <FiTrash2 />
+                    </button>
+                  </div>
+                  <h4 style={{ margin: "5px 0", fontWeight: "800" }}>{item.fileName}</h4>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "15px" }}>
+                    <span className={`risk-badge risk-${item.overallRisk.toLowerCase()}`} style={{ fontSize: "10px", padding: "4px 10px" }}>
+                      {item.overallRisk}
+                    </span>
+                    <span style={{ fontWeight: "900", color: "var(--lab-primary)" }}>{item.healthScore}%</span>
+                  </div>
+                </div>
               ))}
-
             </div>
+          </section>
+        )}
 
-          )}
-
-        </div>
       </div>
 
+      {/* Disclaimer */}
+      <footer style={{ marginTop: "80px", textAlign: "center", padding: "40px", borderTop: "1px solid #E2E8F0" }}>
+        <p style={{ fontSize: "12px", color: "#94A3B8", maxWidth: "800px", margin: "0 auto" }}>
+          <strong>Medical Disclaimer:</strong> MyMediExpress LabReportAI provides informational biomarker analysis only.
+          This is not a substitute for professional medical diagnosis or treatment. Always consult with a qualified
+          healthcare professional for any health concerns or before making dietary or lifestyle changes.
+        </p>
+      </footer>
     </div>
   );
-}
+};
+
+export default LabReportAI;
