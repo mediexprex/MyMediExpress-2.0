@@ -1,0 +1,167 @@
+.symptom-tracker-page {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+}
+
+.timeline-premium {
+  position: relative;
+  padding-left: 40px;
+}
+
+.timeline-premium::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--border-color);
+  border-radius: 2px;
+}
+
+.symptom-card-premium {
+  border-radius: 32px;
+  background-color: var(--card-bg);
+  border: 1.5px solid var(--border-color);
+  padding: 32px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.symptom-card-premium:hover {
+  transform: translateX(10px);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+}
+
+.severity-dot {
+  position: absolute;
+  left: -42px;
+  top: 30px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 4px solid var(--bg-color);
+  z-index: 10;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.severity-pill {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  color: white;
+  display: inline-block;
+}
+
+.log-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.meta-info {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* AI Panel */
+.ai-triage-card {
+  border-radius: 40px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: white;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-premium);
+}
+
+.triage-glow {
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%);
+}
+
+.triage-content {
+  position: relative;
+  z-index: 10;
+}
+
+.directive-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.2s;
+}
+
+.directive-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.02);
+}
+
+.icon-box-red {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Trend Charts placeholder */
+.trend-visual {
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: 30px;
+}
+
+.bar-segment {
+  flex: 1;
+  border-radius: 8px 8px 0 0;
+  background-color: var(--bg-color);
+  position: relative;
+}
+
+.bar-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 768px) {
+  .health-timeline-card {
+    padding: 30px !important;
+  }
+  .symptom-card-premium {
+    padding: 20px;
+  }
+  .timeline-premium {
+    padding-left: 30px;
+  }
+}

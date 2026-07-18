@@ -1,195 +1,109 @@
-import { db } from "../firebase/config";
-
+import { db, storage, auth } from "../firebase/config";
 import {
   collection,
   addDoc,
   serverTimestamp,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  limit,
 } from "firebase/firestore";
-
-import { auth } from "../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const ORDER_COLLECTION = "orders";
 
 /* ==========================================
-   Generate Order ID
+   Generate Unique Order ID
+   Format: MEDI-YYYYMMDD-XXXX
 ========================================== */
-
 const generateOrderId = () => {
-
-  return `MEDI-${Date.now()}`;
-
+  const date = new Date();
+  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
+  const randomStr = Math.floor(1000 + Math.random() * 9000);
+  return `MEDI-${dateStr}-${randomStr}`;
 };
 
 /* ==========================================
    Create Medicine Order
 ========================================== */
-
 export async function createMedicineOrder(formData) {
-
   try {
-
-    console.log("========== ORDER START ==========");
-
     const currentUser = auth.currentUser;
-
     const orderId = generateOrderId();
 
+    let prescriptionURL = "";
+    if (formData.prescription) {
+      const storageRef = ref(storage, `prescriptions/${orderId}_${formData.prescription.name}`);
+      const uploadResult = await uploadBytes(storageRef, formData.prescription);
+      prescriptionURL = await getDownloadURL(uploadResult.ref);
+    }
+
     const order = {
-
-      /* -------------------------------
-         Order Info
-      -------------------------------- */
-
-      orderId,
-
+      orderId: orderId,
+      userId: currentUser?.uid || null,
+      customerName: formData.customerName,
+      phone: formData.phone,
+      address: formData.address,
+      city: formData.city || "",
+      pincode: formData.pincode || "",
+      email: formData.email || currentUser?.email || "",
+      medicines: [],
+      prescriptionURL: prescriptionURL,
+      orderStatus: "Pending", // Changed to orderStatus as requested
+      status: "Pending",      // Keep legacy for compatibility
+      createdAt: serverTimestamp(),
       service: "Medicine Delivery",
-
-      orderType: "Medicine",
-
-      status: "Pending",
-
-      paymentStatus: "Pending",
-
-      deliveryStatus: "Awaiting Confirmation",
-
-      /* -------------------------------
-         User
-      -------------------------------- */
-
-      uid: currentUser?.uid || null,
-
-      displayName:
-        currentUser?.displayName ||
-        formData.customerName,
-
-      userEmail:
-        currentUser?.email ||
-        formData.email,
-
-      customerPhoto:
-        currentUser?.photoURL || "",
-
-      /* -------------------------------
-         Customer Details
-      -------------------------------- */
-
-      customerName:
-        formData.customerName,
-
-      phone:
-        formData.phone,
-
-      alternatePhone:
-        formData.alternatePhone || "",
-
-      email:
-        formData.email || "",
-
-      /* -------------------------------
-         Address
-      -------------------------------- */
-
-      address:
-        formData.address,
-
-      city:
-        formData.city,
-
-      pincode:
-        formData.pincode,
-
-      landmark:
-        formData.landmark || "",
-
-      /* -------------------------------
-         Prescription
-      -------------------------------- */
-
-      prescriptionUrl: "",
-
-      prescriptionFileName:
-        formData.prescription
-          ? formData.prescription.name
-          : "",
-
-      /* -------------------------------
-         Notes
-      -------------------------------- */
-
-      notes:
-        formData.notes || "",
-
-      /* -------------------------------
-         Delivery
-      -------------------------------- */
-
-      assignedTo: "",
-
-      estimatedDelivery: "",
-
-      trackingNumber: "",
-
-      /* -------------------------------
-         Metadata
-      -------------------------------- */
-
-      orderSource: "Website",
-
-      createdBy:
-        currentUser?.uid || "Guest",
-
-      createdAt:
-        serverTimestamp(),
-
-      updatedAt:
-        serverTimestamp(),
-
-      /* -------------------------------
-         History
-      -------------------------------- */
-
-      history: [
-
-        {
-
-          status:
-            "Pending",
-
-          message:
-            "Order Submitted",
-
-          time:
-            new Date(),
-
-        },
-
-      ],
-
     };
 
-    console.log(order);
-
-    await addDoc(
-
-      collection(
-        db,
-        ORDER_COLLECTION
-      ),
-
-      order
-
-    );
-
-    console.log("Order Saved");
-
+    await addDoc(collection(db, ORDER_COLLECTION), order);
     return orderId;
-
   } catch (error) {
-
-    console.error(error);
-
+    console.error("Order Creation Error:", error);
     throw error;
-
   }
-
 }
+
+/* ==========================================
+   Get User Orders (Realtime)
+========================================== */
+export function listenUserOrders(userId, callback) {
+  const q = query(
+    collection(db, ORDER_COLLECTION),
+    where("userId", "==", userId),
+    orderBy("createdAt", "desc")
+  );
+
+  return onSnapshot(q, (snapshot) => {
+    const orders = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    callback(orders);
+  }, (error) => {
+    console.error("Realtime Orders Error:", error);
+  });
+}
+
+/* ==========================================
+   Track Specific Order (Realtime)
+========================================== */
+export function listenToOrder(orderId, callback) {
+  const q = query(
+    collection(db, ORDER_COLLECTION),
+    where("orderId", "==", orderId.trim()),
+    limit(1)
+  );
+
+  return onSnapshot(q, (snapshot) => {
+    if (!snapshot.empty) {
+      callback({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
+    } else {
+      callback(null);
+    }
+  }, (error) => {
+    console.error("Track Order Error:", error);
+  });
+}
+
+

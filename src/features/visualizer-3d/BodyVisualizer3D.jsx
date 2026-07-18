@@ -1,198 +1,381 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FiTarget,
-  FiActivity,
-  FiZap,
-  FiShield,
-  FiSearch,
-  FiInfo,
-  FiCheckCircle,
-  FiAlertCircle,
-  FiPlus,
-  FiX,
-  FiExternalLink,
-  FiChevronRight,
-} from "react-icons/fi";
+  Target, Activity, Zap, Shield, Search, Info,
+  CheckCircle, AlertCircle, Plus, X, ExternalLink,
+  ChevronRight, Fingerprint, RotateCcw, Maximize,
+  Minimize, Heart, Brain, Pill, FlaskConical, Stethoscope,
+  AlertTriangle, BookOpen, UserCheck, Microscope
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 import "../../styles/body3d.css";
 
 const BodyVisualizer3D = () => {
   const [selectedOrgan, setSelectedOrgan] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeSystem, setActiveSystem] = useState("Circulatory");
+  const [isBackView, setIsBackView] = useState(false);
+  const [zoom, setZoom] = useState(1);
 
   const anatomyData = [
     {
       id: "brain",
       name: "Brain",
-      system: "Nervous System",
-      desc: "Central organ of the human nervous system. Controls cognitive functions, sensory processing, and motor skills through specialized neural networks.",
-      diseases: ["Alzheimer's", "Epilepsy", "Migraines"],
-      medications: ["Donepezil", "Sumatriptan"],
-      vitals: "Normal cognitive load.",
+      system: "Nervous",
+      desc: "The central control hub of the human body, responsible for processing sensory data, cognitive thought, and motor control.",
+      functions: ["Cognitive Processing", "Motor Control", "Homeostasis", "Sensory Integration"],
+      symptoms: ["Memory Loss", "Chronic Headaches", "Disorientation", "Aphasia"],
+      diseases: ["Alzheimer's Disease", "Epilepsy", "Multiple Sclerosis", "Parkinson's"],
+      aiInsights: "Current neural load is optimal. Recommended: 7-9 hours of sleep to maintain hippocampal neuroplasticity.",
+      tests: ["MRI Brain", "EEG", "CT Scan", "Cognitive Assessment"],
+      doctors: ["Neurologist", "Neurosurgeon"],
+      vitals: "98% Efficiency",
       color: "#3B82F6",
-      top: "8%", left: "50%",
+      top: "12%", left: "50%",
+      icon: <Brain />
     },
     {
       id: "heart",
       name: "Heart",
-      system: "Circulatory System",
-      desc: "Muscular pump that circulates blood throughout the body. Regulates blood pressure and maintains oxygen distribution to all major tissues.",
-      diseases: ["Hypertension", "Arrhythmia"],
-      medications: ["Atorvastatin", "Amlodipine"],
+      system: "Circulatory",
+      desc: "A powerful muscular pump that circulates oxygenated blood through the cardiovascular network to sustain life.",
+      functions: ["Blood Circulation", "Pressure Regulation", "Oxygen Transport", "Nutrient Delivery"],
+      symptoms: ["Chest Tightness", "Palpitations", "Shortness of Breath", "Edema"],
+      diseases: ["Coronary Artery Disease", "Atrial Fibrillation", "Heart Failure", "Hypertension"],
+      aiInsights: "HRV (Heart Rate Variability) indicates a slight stress trend. Consider 10 minutes of guided respiratory synchronization.",
+      tests: ["ECG / EKG", "Echocardiogram", "Lipid Profile", "Stress Test"],
+      doctors: ["Cardiologist", "Vascular Specialist"],
       vitals: "72 BPM - Stable",
       color: "#EF4444",
-      top: "28%", left: "46%",
+      top: "32%", left: "47%",
+      icon: <Heart />
     },
     {
       id: "lungs",
       name: "Lungs",
-      system: "Respiratory System",
-      desc: "Primary organs of gas exchange. Responsible for extracting oxygen from the atmosphere and transferring it into the bloodstream.",
-      diseases: ["Asthma", "COPD"],
-      medications: ["Albuterol", "Fluticasone"],
-      vitals: "98% SpO2 - Clear",
+      system: "Respiratory",
+      desc: "Primary organs for gas exchange, extracting life-sustaining oxygen from the air and expelling carbon dioxide.",
+      functions: ["Gas Exchange", "Acid-Base Balance", "Air Filtration", "Phonation"],
+      symptoms: ["Wheezing", "Persistent Cough", "Cyanosis", "Rapid Breathing"],
+      diseases: ["COPD", "Asthma", "Emphysema", "Cystic Fibrosis"],
+      aiInsights: "Oxygen saturation is excellent (99%). Respiratory rhythm is synchronized with current metabolic demands.",
+      tests: ["Spirometry", "Chest X-Ray", "Pulse Oximetry", "ABG Analysis"],
+      doctors: ["Pulmonologist", "Respiratory Therapist"],
+      vitals: "14 Breaths/Min",
       color: "#14B8A6",
-      top: "28%", left: "54%",
-    },
-    {
-      id: "stomach",
-      name: "Stomach",
-      system: "Digestive System",
-      desc: "Organ responsible for mechanical and chemical digestion of ingested material using gastric acids and enzymes.",
-      diseases: ["Gastritis", "GERD"],
-      medications: ["Omeprazole", "Pantoprazole"],
-      vitals: "Digestion active.",
-      color: "#F97316",
-      top: "42%", left: "50%",
+      top: "32%", left: "54%",
+      icon: <Activity />
     },
     {
       id: "liver",
       name: "Liver",
-      system: "Digestive System",
-      desc: "Metabolic factory that detoxifies blood, produces bile for digestion, and stores glycogen for energy regulation.",
-      diseases: ["Hepatitis", "Cirrhosis"],
-      medications: ["Tenofovir"],
-      vitals: "Enzymes optimal.",
+      system: "Digestive",
+      desc: "The body's primary metabolic factory, responsible for detoxification, protein synthesis, and bile production.",
+      functions: ["Detoxification", "Protein Synthesis", "Glycogen Storage", "Bile Secretion"],
+      symptoms: ["Jaundice", "Abdominal Swelling", "Dark Urine", "Chronic Fatigue"],
+      diseases: ["Hepatitis B/C", "Non-Alcoholic Fatty Liver", "Cirrhosis", "Hemochromatosis"],
+      aiInsights: "Enzymatic markers (ALT/AST) indicate healthy metabolic processing. Continue high antioxidant intake.",
+      tests: ["LFT Panel", "Liver Ultrasound", "FibroScan", "AFP Test"],
+      doctors: ["Hepatologist", "Gastroenterologist"],
+      vitals: "Normal Enzyme Levels",
       color: "#B45309",
-      top: "40%", left: "43%",
+      top: "43%", left: "44%",
+      icon: <Shield />
     },
+    {
+      id: "kidneys",
+      name: "Kidneys",
+      system: "Urinary",
+      desc: "Vital filtration units that remove metabolic waste from blood and maintain critical electrolyte and fluid balance.",
+      functions: ["Waste Filtration", "Fluid Balance", "Erythropoietin Release", "Electrolyte Regulation"],
+      symptoms: ["Hematuria", "Periorbital Edema", "Foamy Urine", "Lower Back Pain"],
+      diseases: ["CKD (Chronic Kidney Disease)", "Nephrolithiasis", "Polycystic Kidney Disease"],
+      aiInsights: "Filtration rate (eGFR) is stable. Increase fluid intake by 400ml today due to ambient temperature change.",
+      tests: ["Creatinine Test", "BUN", "Kidney Ultrasound", "GFR Calculation"],
+      doctors: ["Nephrologist", "Urologist"],
+      vitals: "eGFR: 95 mL/min",
+      color: "#8B5CF6",
+      top: "52%", left: "50%",
+      icon: <FlaskConical />
+    },
+    {
+      id: "stomach",
+      name: "Stomach",
+      system: "Digestive",
+      desc: "Muscular organ that initiates chemical and mechanical digestion through acid secretion and rhythmic contractions.",
+      functions: ["Chemical Digestion", "Intrinsic Factor Secretion", "Temporary Storage"],
+      symptoms: ["Epigastric Pain", "Hematemesis", "Melena", "Persistent Bloating"],
+      diseases: ["Gastritis", "Peptic Ulcer Disease", "GERD", "Gastroparesis"],
+      aiInsights: "Gastric acid levels are balanced. Post-prandial motility is within expected parameters.",
+      tests: ["Endoscopy (EGD)", "H. Pylori Breath Test", "Barium Swallow"],
+      doctors: ["Gastroenterologist"],
+      vitals: "pH 2.0 (Active)",
+      color: "#F97316",
+      top: "45%", left: "52%",
+      icon: <Pill />
+    }
   ];
 
-  const filtered = useMemo(() =>
-    anatomyData.filter(i => i.name.toLowerCase().includes(searchTerm.toLowerCase())),
-    [searchTerm]
-  );
+  const systems = [
+    { name: "Circulatory", icon: "❤️" },
+    { name: "Nervous", icon: "🧠" },
+    { name: "Respiratory", icon: "🫁" },
+    { name: "Digestive", icon: "🥣" },
+    { name: "Urinary", icon: "💧" },
+    { name: "Skeletal", icon: "🦴" },
+    { name: "Muscular", icon: "💪" }
+  ];
+
+  const filteredHotspots = useMemo(() => {
+    return anatomyData.filter(organ => {
+      const matchesSearch = organ.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSystem = activeSystem === "All" || organ.system === activeSystem;
+      return matchesSearch && matchesSystem;
+    });
+  }, [searchTerm, activeSystem]);
+
+  // Initial selection
+  useEffect(() => {
+    if (!selectedOrgan) setSelectedOrgan(anatomyData.find(o => o.id === "heart"));
+  }, []);
 
   return (
-    <div className="body-visualizer-page">
-      <div className="body-container">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="body-visualizer-page"
+    >
+      <div className="anatomy-container">
 
-        <header className="body-header">
-          <h1><FiTarget /> Body<span>Visualizer</span></h1>
-          <div className="search-wrap">
-            <i><FiSearch /></i>
+        {/* ==========================================
+           HEADER & SEARCH SECTION
+           ========================================== */}
+        <header className="explorer-header">
+          <div className="brand-badge">
+            <div className="brand-icon">
+              <Fingerprint size={30} />
+            </div>
+            <div className="brand-text">
+              <h1>Bio<span>Explorer</span></h1>
+              <p>High Fidelity Anatomical Engine</p>
+            </div>
+          </div>
+
+          <div className="search-bar-glass">
+            <Search size={20} className="text-muted" />
             <input
               type="text"
-              className="body-search"
-              placeholder="Search anatomy..."
+              placeholder="Search physiological systems..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </header>
 
-        <div className="body-layout-grid">
+        {/* ==========================================
+           MAIN GRID (Viewer + Info)
+           ========================================== */}
+        <div className="anatomy-main-grid">
           
-          <main className="visualizer-card">
-            <div className="model-stage">
-              <svg viewBox="0 0 100 200" style={{ height: '100%', width: '100%' }}>
+          {/* LEFT: 3D VIEWER STAGE */}
+          <section className="viewer-stage">
+            <div className="viewer-ui-overlay">
+              <div className="viewer-tool active" onClick={() => setIsBackView(!isBackView)}>
+                <RotateCcw size={22} />
+              </div>
+              <div className="viewer-tool" onClick={() => setZoom(prev => Math.min(prev + 0.2, 2))}>
+                <Maximize size={22} />
+              </div>
+              <div className="viewer-tool" onClick={() => setZoom(prev => Math.max(prev - 0.2, 0.5))}>
+                <Minimize size={22} />
+              </div>
+            </div>
+
+            <motion.div
+              className="human-body-container"
+              animate={{
+                scale: zoom,
+                rotateY: isBackView ? 180 : 0
+              }}
+              transition={{ type: "spring", stiffness: 50 }}
+            >
+              {/* Professional Anatomy SVG Group */}
+              <svg viewBox="0 0 100 200" className="body-svg">
+                <defs>
+                  <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="var(--secondary-color)" stopOpacity="0.05" />
+                    <stop offset="100%" stopColor="var(--primary-color)" stopOpacity="0.15" />
+                  </linearGradient>
+                </defs>
                 <path
-                  d="M50,10 C55,10 60,15 60,25 C60,35 55,40 50,40 C45,40 40,35 40,25 C40,15 45,10 50,10 M40,40 L60,40 L70,100 L60,180 L40,180 L30,100 Z"
-                  fill="#f1f5f9"
+                  d="M50,10 C56,10 61,16 61,26 C61,36 56,42 50,42 C44,42 39,36 39,26 C39,16 44,10 50,10 M39,42 L61,42 L72,95 L63,190 L37,190 L28,95 Z"
+                  fill="url(#bodyGrad)"
+                  stroke="var(--border-color)"
+                  strokeWidth="0.5"
                 />
+                <path d="M42,95 L38,190" stroke="var(--border-color)" strokeWidth="0.5" fill="none" />
+                <path d="M58,95 L62,190" stroke="var(--border-color)" strokeWidth="0.5" fill="none" />
               </svg>
 
-              {filtered.map(organ => (
+              {/* Real Hotspots */}
+              {filteredHotspots.map(organ => (
                 <div
                   key={organ.id}
-                  className={`hotspot ${selectedOrgan?.id === organ.id ? 'active' : ''}`}
-                  style={{ top: organ.top, left: organ.left, backgroundColor: organ.color }}
+                  className={`anatomy-hotspot ${selectedOrgan?.id === organ.id ? 'active' : ''}`}
+                  style={{
+                    top: organ.top,
+                    left: organ.left,
+                    backgroundColor: organ.color,
+                    color: organ.color,
+                    rotateY: isBackView ? 180 : 0 // Keep hotspots front-facing
+                  }}
                   onClick={() => setSelectedOrgan(organ)}
-                ></div>
+                />
               ))}
-            </div>
+            </motion.div>
+          </section>
 
-            <div className="legend-card">
-               <div className="legend-item"><div className="legend-dot" style={{ background: '#3B82F6' }}></div> Nervous</div>
-               <div className="legend-item"><div className="legend-dot" style={{ background: '#EF4444' }}></div> Circulatory</div>
-               <div className="legend-item"><div className="legend-dot" style={{ background: '#14B8A6' }}></div> Respiratory</div>
-               <div className="legend-item"><div className="legend-dot" style={{ background: '#F97316' }}></div> Digestive</div>
-            </div>
-          </main>
-
-          <aside className="organ-details-view">
+          {/* RIGHT: GLASS ORGAN CARD */}
+          <aside className="organ-info-card">
             <AnimatePresence mode="wait">
-              {!selectedOrgan ? (
-                <div className="empty-details-state">
-                  <FiInfo size={48} style={{ marginBottom: '20px', opacity: 0.2 }} />
-                  <h3>Interactive Anatomy</h3>
-                  <p>Select a region on the biological model to view telemetry data and AI insights.</p>
-                </div>
-              ) : (
+              {selectedOrgan ? (
                 <motion.div
                   key={selectedOrgan.id}
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className="organ-card-scroll"
                 >
-                  <section className="organ-hero-card">
-                    <span className="organ-tag">{selectedOrgan.system}</span>
-                    <h2 className="organ-title">{selectedOrgan.name}</h2>
-                    <p className="organ-desc">{selectedOrgan.desc}</p>
-                    <div className="diag-pill">
-                      <FiActivity /> {selectedOrgan.vitals}
+                  <div className="organ-image-wrapper">
+                    <div style={{ color: selectedOrgan.color, opacity: 0.2 }}>
+                      {React.cloneElement(selectedOrgan.icon, { size: 180 })}
                     </div>
-                  </section>
-
-                  <div className="info-box">
-                    <h4><FiAlertCircle style={{ color: '#EF4444' }} /> Common Conditions</h4>
-                    <div className="pill-list">
-                      {selectedOrgan.diseases.map(d => (
-                        <span key={d} className="data-pill">{d}</span>
-                      ))}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                       {React.cloneElement(selectedOrgan.icon, { size: 100, color: selectedOrgan.color })}
                     </div>
                   </div>
 
-                  <div className="info-box">
-                    <h4><FiZap style={{ color: '#3B82F6' }} /> Targeted Medications</h4>
-                    <div className="pill-list">
-                      {selectedOrgan.medications.map(m => (
-                        <span key={m} className="data-pill">{m}</span>
-                      ))}
+                  <div className="organ-title-section">
+                    <span className="system-tag">{selectedOrgan.system} System</span>
+                    <h2>{selectedOrgan.name}</h2>
+                    <div className="organ-vitals">
+                       <div className="vital-item">
+                         <span>Status</span>
+                         <strong>Optimal</strong>
+                       </div>
+                       <div className="vital-item">
+                         <span>Live Telemetry</span>
+                         <strong>{selectedOrgan.vitals}</strong>
+                       </div>
                     </div>
                   </div>
 
-                  <a href="#" className="btn-ai-specialist">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                      <FiShield size={24} />
-                      <div>
-                        <span style={{ display: 'block', fontSize: '10px', textTransform: 'uppercase' }}>Expert Query</span>
-                        <span>Ask AI Specialist</span>
-                      </div>
+                  <div className="info-section">
+                    <h4><Info size={16} /> Description</h4>
+                    <p>{selectedOrgan.desc}</p>
+                  </div>
+
+                  <div className="info-section">
+                    <h4><Activity size={16} /> Primary Functions</h4>
+                    <div className="pill-container">
+                      {selectedOrgan.functions.map(f => <div key={f} className="data-pill">{f}</div>)}
                     </div>
-                    <FiChevronRight size={24} />
-                  </a>
+                  </div>
+
+                  <div className="ai-insight-box">
+                    <h5><Zap size={14} fill="currentColor" /> AI Health Bio-Insight</h5>
+                    <p className="text-sm italic font-medium text-slate-500">"{selectedOrgan.aiInsights}"</p>
+                  </div>
+
+                  <div className="info-section">
+                    <h4><AlertTriangle size={16} /> Common Symptoms</h4>
+                    <div className="pill-container">
+                      {selectedOrgan.symptoms.map(s => <div key={s} className="data-pill" style={{ borderColor: '#FEE2E2', color: '#EF4444' }}>{s}</div>)}
+                    </div>
+                  </div>
+
+                  <div className="info-section">
+                    <h4><Shield size={16} /> Related Diseases</h4>
+                    <div className="pill-container">
+                      {selectedOrgan.diseases.map(d => <div key={d} className="data-pill">{d}</div>)}
+                    </div>
+                  </div>
+
                 </motion.div>
+              ) : (
+                <div className="h-full flex items-center justify-center p-12 text-center">
+                  <p className="text-muted font-bold">Select an anatomical node to initialize data stream.</p>
+                </div>
               )}
             </AnimatePresence>
-          </aside>
 
+            <div className="organ-card-actions">
+              <button className="btn-primary w-full py-5 rounded-2xl">
+                 <Stethoscope size={20} /> Consult Specialist
+              </button>
+              <div className="action-row">
+                <button className="btn-secondary flex-1 py-4 rounded-xl">
+                  <Microscope size={18} /> Lab Tests
+                </button>
+                <button className="btn-secondary flex-1 py-4 rounded-xl">
+                  <BookOpen size={18} /> Learn More
+                </button>
+              </div>
+            </div>
+          </aside>
         </div>
 
+        {/* ==========================================
+           BOTTOM: SYSTEMS & RELATED
+           ========================================== */}
+        <section className="anatomy-footer-content">
+
+          <div className="systems-scroller">
+            {systems.map(sys => (
+              <div
+                key={sys.name}
+                className={`system-card ${activeSystem === sys.name ? 'active' : ''}`}
+                onClick={() => setActiveSystem(sys.name)}
+              >
+                <span className="sys-icon">{sys.icon}</span>
+                <span>{sys.name}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="related-grid">
+            <div className="related-section">
+              <h3><AlertTriangle size={20} /> Common Regional Pathologies</h3>
+              <div className="related-list">
+                {selectedOrgan?.diseases.map(d => (
+                  <div key={d} className="related-item">
+                    <span>{d}</span>
+                    <ChevronRight size={16} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="related-section">
+              <h3><Microscope size={20} /> Recommended Diagnostic Protocols</h3>
+              <div className="related-list">
+                {selectedOrgan?.tests.map(t => (
+                  <div key={t} className="related-item">
+                    <span>{t}</span>
+                    <div className="p-2 bg-primary bg-opacity-10 text-primary rounded-lg">
+                       <Plus size={14} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </section>
+
       </div>
-    </div>
+    </motion.div>
   );
 };
 

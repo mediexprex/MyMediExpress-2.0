@@ -1,278 +1,123 @@
 /* =====================================================
-   MyMediExpress - My Account Dashboard
+   MyMediExpress - My Account Dashboard (Premium Upgrade)
 ===================================================== */
 
-.myaccount-page{
-
-    min-height:100vh;
-
-    background:linear-gradient(
-        135deg,
-        #eef9ff 0%,
-        #ffffff 50%,
-        #ecfff5 100%
-    );
-
-    padding:40px 20px;
-
+.myaccount-page {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  padding: 40px 24px 100px 24px;
+  transition: background-color 0.3s ease;
 }
 
-.myaccount-container{
-
-    max-width:1200px;
-
-    margin:auto;
-
+.myaccount-container {
+  max-width: 1400px;
+  margin: auto;
 }
 
-/* ==========================
-   Header
-========================== */
-
-.account-header{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:20px;
-
-    background:#ffffff;
-
-    border-radius:20px;
-
-    padding:25px;
-
-    margin-bottom:30px;
-
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-
+/* Header */
+.account-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 32px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
 }
 
-.account-avatar{
-
-    font-size:70px;
-
-    color:#0ea5e9;
-
+.account-avatar {
+  font-size: 64px;
+  color: var(--secondary-color);
 }
 
-.account-header h2{
-
-    margin:0;
-
-    color:#0f172a;
-
+.account-header h2 {
+  color: var(--text-main);
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 4px;
 }
 
-.account-header h3{
-
-    margin:8px 0;
-
-    color:#2563eb;
-
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
 }
 
-.account-header p{
-
-    color:#64748b;
-
+.dashboard-card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-decoration: none;
+  color: var(--text-main);
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
 
-/* ==========================
-   Dashboard Grid
-========================== */
-
-.dashboard-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-
-    gap:20px;
-
-    margin-bottom:35px;
-
+.dashboard-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color);
 }
 
-.dashboard-card{
-
-    background:#fff;
-
-    border-radius:18px;
-
-    padding:28px;
-
-    text-decoration:none;
-
-    color:#1e293b;
-
-    text-align:center;
-
-    transition:.3s;
-
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-
+.dashboard-card svg {
+  font-size: 48px;
+  color: var(--primary-color);
+  margin-bottom: 20px;
 }
 
-.dashboard-card:hover{
-
-    transform:translateY(-8px);
-
-    box-shadow:0 20px 40px rgba(14,165,233,.18);
-
+.dashboard-card h4 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 12px;
 }
 
-.dashboard-card svg{
-
-    font-size:42px;
-
-    color:#10b981;
-
-    margin-bottom:15px;
-
+.dashboard-card p {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.dashboard-card h4{
-
-    margin-bottom:10px;
-
+/* Profile Section */
+.profile-card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
 }
 
-.dashboard-card p{
-
-    color:#64748b;
-
-    font-size:14px;
-
+.profile-item {
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 0;
+  color: var(--text-main);
 }
 
-/* ==========================
-   Profile Card
-========================== */
-
-.profile-card{
-
-    background:#fff;
-
-    border-radius:20px;
-
-    padding:30px;
-
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-
+.profile-item strong {
+  font-weight: 700;
 }
 
-.profile-card h3{
-
-    margin-bottom:25px;
-
-    color:#0f172a;
-
+.profile-item span {
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
-.profile-item{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:15px;
-
-    padding:15px 0;
-
-    border-bottom:1px solid #e5e7eb;
-
+.edit-profile-btn {
+  background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+  border-radius: var(--radius-md);
+  padding: 14px 32px;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
 }
 
-.profile-item:last-child{
-
-    border-bottom:none;
-
-}
-
-.profile-item svg{
-
-    color:#0ea5e9;
-
-    font-size:22px;
-
-}
-
-.profile-item span{
-
-    width:100px;
-
-    color:#64748b;
-
-}
-
-.profile-item strong{
-
-    color:#111827;
-
-}
-
-.edit-profile-btn{
-
-    display:inline-block;
-
-    margin-top:30px;
-
-    background:linear-gradient(
-        90deg,
-        #0ea5e9,
-        #10b981
-    );
-
-    color:#fff;
-
-    text-decoration:none;
-
-    padding:12px 28px;
-
-    border-radius:10px;
-
-    font-weight:600;
-
-    transition:.3s;
-
-}
-
-.edit-profile-btn:hover{
-
-    transform:translateY(-3px);
-
-}
-
-/* ==========================
-   Responsive
-========================== */
-
-@media(max-width:768px){
-
-    .account-header{
-
-        flex-direction:column;
-
-        text-align:center;
-
-    }
-
-    .profile-item{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        gap:8px;
-
-    }
-
-    .profile-item span{
-
-        width:auto;
-
-    }
-
+@media (max-width: 768px) {
+  .account-header {
+    flex-direction: column;
+    text-align: center;
+  }
 }

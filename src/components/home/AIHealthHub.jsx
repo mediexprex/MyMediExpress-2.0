@@ -2,117 +2,111 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  FiZap,
-  FiActivity,
-  FiDroplet,
-  FiPieChart,
-  FiClock,
-  FiCalendar,
-  FiCamera,
-  FiFileText,
-  FiTarget,
-  FiArrowRight,
-  FiLayers
-} from "react-icons/fi";
+  Zap, Activity, Droplets, PieChart, Clock,
+  Calendar, Camera, FileText, Target, ArrowRight, Layers
+} from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 const AIHealthHub = () => {
+  const { t } = useLanguage();
+
   const cards = [
     {
-      title: "AI Dashboard",
-      desc: "Comprehensive overview of your health metrics and AI insights.",
-      icon: <FiLayers />,
+      title: t('aiDashboard'),
+      desc: "Clinical overview of health metrics and biometric telemetry insights.",
+      icon: <Layers size={28} />,
       link: "/ai-dashboard",
-      color: "bg-blue-600",
+      color: "from-blue-600 to-blue-400",
       delay: 0.1,
     },
     {
-      title: "Medicine Scanner",
-      desc: "Scan any medicine pack for instant AI analysis and dosage info.",
-      icon: <FiCamera />,
+      title: t('medicineScanner'),
+      desc: "Optical pharmaceutical analysis for instant dosage and safety info.",
+      icon: <Camera size={28} />,
       link: "/scanner-ocr",
-      color: "bg-purple-600",
+      color: "from-purple-600 to-purple-400",
       delay: 0.2,
     },
     {
-      title: "Lab Report AI",
-      desc: "Upload lab reports to get simplified AI summaries and risk analysis.",
-      icon: <FiFileText />,
+      title: t('labReportAI'),
+      desc: "Heuristic mapping of diagnostic reports and clinical risk evaluation.",
+      icon: <FileText size={28} />,
       link: "/lab-report-ai",
-      color: "bg-teal-600",
+      color: "from-teal-600 to-teal-400",
       delay: 0.3,
     },
     {
-      title: "Medicine Reminder",
-      desc: "Never miss a dose with our intelligent scheduling system.",
-      icon: <FiClock />,
+      title: t('medicineReminder'),
+      desc: "Chronological pharmaceutical administration scheduling protocols.",
+      icon: <Clock size={28} />,
       link: "/medicine-reminder",
-      color: "bg-indigo-600",
+      color: "from-indigo-600 to-indigo-400",
       delay: 0.4,
     },
     {
-      title: "Water Tracker",
-      desc: "Track daily hydration goals with AI-optimized intake advice.",
-      icon: <FiDroplet />,
+      title: t('waterTracker'),
+      desc: "Heuristic hydration tracking with metabolic efficiency advice.",
+      icon: <Droplets size={28} />,
       link: "/water-tracker",
-      color: "bg-sky-500",
+      color: "from-sky-600 to-sky-400",
       delay: 0.5,
     },
     {
-      title: "Food Tracker",
-      desc: "Log meals and track calories with nutritional AI support.",
-      icon: <FiPieChart />,
+      title: t('foodTracker'),
+      desc: "Nutrient payload logging with Gemini AI thermodynamic analysis.",
+      icon: <PieChart size={28} />,
       link: "/food-tracker",
-      color: "bg-orange-500",
+      color: "from-orange-600 to-orange-400",
       delay: 0.6,
     },
     {
-      title: "Symptom Tracker",
-      desc: "Log health changes and get instant AI preliminary guidance.",
-      icon: <FiActivity />,
+      title: t('symptomTracker'),
+      desc: "Biometric variance logging with automated preliminary guidance.",
+      icon: <Activity size={28} />,
       link: "/symptom-tracker",
-      color: "bg-red-500",
+      color: "from-red-600 to-red-400",
       delay: 0.7,
     },
     {
-      title: "Health Timeline",
-      desc: "A unified view of your entire medical history and activities.",
-      icon: <FiCalendar />,
+      title: t('healthTimeline'),
+      desc: "Unified medical registry of chronological clinical events.",
+      icon: <Calendar size={28} />,
       link: "/health-timeline",
-      color: "bg-slate-700",
+      color: "from-slate-700 to-slate-500",
       delay: 0.8,
     },
     {
-      title: "3D Body Visualizer",
-      desc: "Interactive anatomical engine to visualize your health data.",
-      icon: <FiTarget />,
+      title: t('body3d'),
+      desc: "High-fidelity anatomical explorer for physiological telemetry.",
+      icon: <Target size={28} />,
       link: "/body-3d",
-      color: "bg-emerald-600",
+      color: "from-emerald-600 to-emerald-400",
       delay: 0.9,
     },
   ];
 
   return (
-    <section className="py-24 bg-white dark:bg-slate-950 overflow-hidden">
+    <section className="py-32 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500">
       <div className="container mx-auto px-6">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-center justify-center gap-2 mb-4"
+            className="flex items-center justify-center gap-4 mb-6"
           >
-            <div className="w-12 h-[2px] bg-blue-600"></div>
-            <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs">Premium AI Platform</span>
-            <div className="w-12 h-[2px] bg-blue-600"></div>
+            <div className="w-16 h-[2px] bg-primary"></div>
+            <span className="text-primary font-black uppercase tracking-[0.4em] text-xs">Clinical Intelligence Platform</span>
+            <div className="w-16 h-[2px] bg-primary"></div>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter"
+            className="text-5xl md:text-6xl font-black text-main mb-8 tracking-tighter"
           >
             AI Health Hub
           </motion.h2>
@@ -121,38 +115,40 @@ const AIHealthHub = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-slate-500 dark:text-slate-400 text-lg font-medium"
+            className="text-muted text-xl font-medium leading-relaxed"
           >
-            Experience the future of healthcare with our suite of intelligent modules, powered by Google Gemini and advanced OCR.
+            Experience the next generation of healthcare telemetry powered by Gemini BioAI and high-fidelity heuristic mapping.
           </motion.p>
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {cards.map((card, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: card.delay, duration: 0.5 }}
-              whileHover={{ y: -10 }}
-              className="group relative"
+              transition={{ delay: card.delay, duration: 0.6, cubicBezier: [0.175, 0.885, 0.32, 1.275] }}
+              className="group"
             >
               <Link to={card.link} className="block h-full">
-                <div className="bg-slate-50 dark:bg-slate-900/50 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 transition-all duration-300 group-hover:border-blue-200 dark:group-hover:border-blue-900 group-hover:shadow-2xl group-hover:shadow-blue-500/10 h-full">
-                  <div className={`${card.color} w-16 h-16 rounded-2xl flex items-center justify-center text-white text-3xl mb-8 shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                <div className="card glass h-full p-10 flex flex-col border-none shadow-md hover:shadow-2xl hover:-translate-y-4 group-hover:border-primary border-opacity-10 transition-all duration-500 rounded-[40px] relative overflow-hidden">
+                  <div className={`w-20 h-20 rounded-[28px] bg-gradient-to-br ${card.color} flex items-center justify-center text-white mb-10 shadow-lg transform transition-transform group-hover:scale-110 group-hover:rotate-6`}>
                     {card.icon}
                   </div>
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-2xl font-black text-main mb-4 group-hover:text-primary transition-colors">
                     {card.title}
                   </h3>
-                  <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8">
+                  <p className="text-muted font-bold text-sm leading-relaxed mb-10 opacity-80">
                     {card.desc}
                   </p>
-                  <div className="flex items-center gap-2 text-blue-600 font-black text-sm uppercase tracking-widest group-hover:gap-4 transition-all">
-                    Explore Now <FiArrowRight />
+                  <div className="mt-auto flex items-center gap-3 text-primary font-black text-xs uppercase tracking-[3px] group-hover:gap-5 transition-all">
+                    Initialize Protocol <ArrowRight size={16} />
                   </div>
+
+                  {/* Decorative Gradient Blob */}
+                  <div className={`absolute -right-4 -bottom-4 w-24 h-24 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-5 rounded-full blur-2xl transition-opacity`}></div>
                 </div>
               </Link>
             </motion.div>
@@ -161,20 +157,18 @@ const AIHealthHub = () => {
 
         {/* Bottom CTA */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="mt-20 p-12 bg-blue-600 rounded-[3rem] text-center text-white relative overflow-hidden shadow-2xl shadow-blue-600/30"
+          className="mt-32 p-16 bg-slate-900 rounded-[60px] text-center text-white relative overflow-hidden shadow-2xl"
         >
-          <div className="absolute top-0 right-0 p-10 opacity-10 rotate-12">
-            <FiZap size={150} />
-          </div>
-          <h3 className="text-3xl font-black mb-4">Start Your AI Health Journey Today</h3>
-          <p className="text-blue-100 max-w-xl mx-auto mb-10 font-medium">
-            All features are included in your MyMediExpress account. Secure, private, and powered by the world's most advanced AI models.
+          <Zap className="absolute -right-20 -top-20 text-[300px] opacity-5 rotate-12 text-white" />
+          <h3 className="text-4xl font-black mb-6 relative z-10 tracking-tight">Sync Your Biological Profile</h3>
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-12 relative z-10 font-medium">
+            Commence high-fidelity health tracking with MyMediExpress secure clinical infrastructure.
           </p>
-          <Link to="/register" className="bg-white text-blue-600 px-10 py-4 rounded-2xl font-black text-sm hover:scale-105 transition-all inline-block shadow-xl">
-            Create Free Account
+          <Link to="/register" className="btn-primary py-5 px-16 text-sm uppercase tracking-[4px] relative z-10 shadow-2xl hover:scale-105 transition-all rounded-3xl">
+             Begin Initialization
           </Link>
         </motion.div>
       </div>

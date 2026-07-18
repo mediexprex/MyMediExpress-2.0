@@ -1,460 +1,109 @@
 /* =====================================================
-   MyMediExpress - User Profile
+   MyMediExpress - User Profile (Premium Upgrade)
 ===================================================== */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+.profile-page {
+  min-height: 100vh;
+  padding: 40px 24px 100px 24px;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease;
 }
 
-.profile-page{
-
-    min-height:100vh;
-
-    padding:40px 20px;
-
-    background:linear-gradient(
-        135deg,
-        #eef9ff 0%,
-        #ffffff 50%,
-        #ecfff5 100%
-    );
-
-}
-
-.profile-container{
-
-    max-width:1100px;
-
-    margin:0 auto;
-
+.profile-container {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* =====================================================
-   Profile Header
+   Profile Header & Cards
 ===================================================== */
 
-.profile-header{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:25px;
-
-    background:#ffffff;
-
-    border-radius:24px;
-
-    padding:30px;
-
-    margin-bottom:30px;
-
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-
+.profile-card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 30px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
 }
 
-.profile-avatar{
-
-    position:relative;
-
+.profile-card:hover {
+  box-shadow: var(--shadow-lg);
 }
 
-.avatar-icon{
-
-    font-size:110px;
-
-    color:#0ea5e9;
-
+.profile-card h3 {
+  color: var(--text-main);
+  margin-bottom: 24px;
+  font-size: 20px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.camera-btn{
-
-    position:absolute;
-
-    right:0;
-
-    bottom:6px;
-
-    width:42px;
-
-    height:42px;
-
-    border:none;
-
-    border-radius:50%;
-
-    background:#10b981;
-
-    color:#ffffff;
-
-    cursor:pointer;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    transition:.3s;
-
-}
-
-.camera-btn:hover{
-
-    transform:scale(1.08);
-
-}
-
-.profile-header-content{
-
-    flex:1;
-
-}
-
-.profile-header-content h2{
-
-    font-size:34px;
-
-    color:#0f172a;
-
-    margin-bottom:10px;
-
-}
-
-.profile-header-content p{
-
-    color:#64748b;
-
-    line-height:1.6;
-
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
 }
 
 /* =====================================================
-   Common Card
-===================================================== */
+   Form Elements
+==================================================== */
 
-.profile-card{
-
-    background:#ffffff;
-
-    border-radius:22px;
-
-    padding:30px;
-
-    margin-bottom:25px;
-
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
-.profile-card h3{
-
-    color:#0f172a;
-
-    margin-bottom:25px;
-
-    font-size:22px;
-
-}
-
-/* =====================================================
-   Form Grid
-===================================================== */
-
-.profile-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(2,1fr);
-
-    gap:20px;
-
-}
-
-.form-group{
-
-    display:flex;
-
-    flex-direction:column;
-
-}
-
-.form-group label{
-
-    margin-bottom:8px;
-
-    font-weight:600;
-
-    color:#334155;
-
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-group input,
-
 .form-group select,
-
-.form-group textarea{
-
-    padding:14px 16px;
-
-    border:1px solid #d1d5db;
-
-    border-radius:12px;
-
-    outline:none;
-
-    font-size:15px;
-
-    transition:.3s;
-
-    background:#ffffff;
-
-}
-
-.form-group textarea{
-
-    resize:none;
-
-    min-height:120px;
-
+.form-group textarea {
+  padding: 14px 18px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  outline: none;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-weight: 500;
 }
 
 .form-group input:focus,
-
 .form-group select:focus,
-
-.form-group textarea:focus{
-
-    border-color:#0ea5e9;
-
-    box-shadow:0 0 0 4px rgba(14,165,233,.12);
-
-}
-
-/* =====================================================
-   Save Button
-===================================================== */
-
-.profile-actions{
-
-    display:flex;
-
-    justify-content:center;
-
-    margin-top:35px;
-
-}
-
-.save-btn{
-
-    border:none;
-
-    padding:15px 45px;
-
-    border-radius:14px;
-
-    font-size:16px;
-
-    font-weight:700;
-
-    cursor:pointer;
-
-    color:#ffffff;
-
-    background:linear-gradient(
-        90deg,
-        #0ea5e9,
-        #10b981
-    );
-
-    transition:.3s;
-
-}
-
-.save-btn:hover{
-
-    transform:translateY(-3px);
-
-    box-shadow:0 12px 25px rgba(16,185,129,.30);
-
+.form-group textarea:focus {
+  border-color: var(--primary-color);
+  background-color: var(--card-bg);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
 
 /* =====================================================
    Responsive
 ===================================================== */
 
-@media(max-width:992px){
-
-    .profile-grid{
-
-        grid-template-columns:1fr;
-
-    }
-
+@media (max-width: 992px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-@media(max-width:768px){
-
-    .profile-header{
-
-        flex-direction:column;
-
-        text-align:center;
-
-    }
-
-}
-
-@media(max-width:480px){
-
-    .profile-page{
-
-        padding:20px 12px;
-
-    }
-
-    .profile-card{
-
-        padding:20px;
-
-    }
-
-    .profile-header{
-
-        padding:20px;
-
-    }
-
-    .avatar-icon{
-
-        font-size:90px;
-
-    }
-
-    .profile-header-content h2{
-
-        font-size:28px;
-
-    }
-
-}
-/* ======================================
-   Personal Information
-====================================== */
-
-.profile-card label{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    font-weight:600;
-
-    margin-bottom:8px;
-
-    color:#334155;
-
-}
-
-.profile-card label svg{
-
-    color:#0ea5e9;
-
-}
-
-.profile-card input,
-
-.profile-card select{
-
-    width:100%;
-
-}
-/* ======================================
-   Address Section
-====================================== */
-
-.profile-card h3{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    margin-bottom:25px;
-
-    color:#0f172a;
-
-}
-
-.profile-card input::placeholder{
-
-    color:#94a3b8;
-
-}
-/* ======================================
-   Emergency Contact
-====================================== */
-
-.profile-card select{
-
-    width:100%;
-
-    padding:14px 16px;
-
-    border:1px solid #d1d5db;
-
-    border-radius:12px;
-
-    outline:none;
-
-    background:#ffffff;
-
-    transition:.3s;
-
-}
-
-.profile-card select:focus{
-
-    border-color:#0ea5e9;
-
-    box-shadow:0 0 0 4px rgba(14,165,233,.12);
-
-}
-/* ======================================
-   Medical Information
-====================================== */
-
-.profile-card textarea{
-
-    width:100%;
-
-    padding:15px;
-
-    border:1px solid #d1d5db;
-
-    border-radius:12px;
-
-    resize:vertical;
-
-    outline:none;
-
-    font-size:15px;
-
-    transition:.3s;
-
-    font-family:inherit;
-
-}
-
-.profile-card textarea:focus{
-
-    border-color:#0ea5e9;
-
-    box-shadow:0 0 0 4px rgba(14,165,233,.12);
-
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 20px 16px 100px 16px;
+  }
+
+  .profile-card {
+    padding: 24px;
+  }
 }

@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FiPlus,
-  FiClock,
-  FiTrash2,
-  FiCheckCircle,
-  FiCalendar,
-  FiAlertCircle,
-  FiZap,
-  FiBell,
-  FiMoreVertical,
-  FiSun,
-  FiMoon,
-  FiSunrise,
-} from "react-icons/fi";
+  Plus, Clock, Trash2, CheckCircle, Calendar as CalendarIcon,
+  Zap, Bell, Sun, Moon, Sunrise, X, Pill, AlertCircle, ChevronRight, Activity, TrendingUp
+} from "lucide-react";
 import { db, auth } from "../../firebase/config";
 import {
   collection,
@@ -27,8 +17,11 @@ import {
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
+import { useLanguage } from "../../context/LanguageContext";
+import "../../styles/medicineReminder.css";
 
 const MedicineReminder = () => {
+  const { t } = useLanguage();
   const [reminders, setReminders] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
   const [formData, setFormData] = useState({
@@ -47,24 +40,16 @@ const MedicineReminder = () => {
 
   useEffect(() => {
     if (!auth.currentUser) return;
-
-    const q = query(
-      collection(db, "medicine_reminders"),
-      where("userId", "==", auth.currentUser.uid),
-      orderBy("createdAt", "desc")
-    );
-
+    const q = query(collection(db, "medicine_reminders"), where("userId", "==", auth.currentUser.uid), orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setReminders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
-
     return unsubscribe;
   }, []);
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.time) return;
-
+    if (!formData.name || !formData.time || !auth.currentUser) return;
     try {
       await addDoc(collection(db, "medicine_reminders"), {
         userId: auth.currentUser.uid,
@@ -75,10 +60,8 @@ const MedicineReminder = () => {
       });
       setShowAdd(false);
       setFormData({ name: "", dosage: "", time: "", frequency: "Daily", type: "Pill" });
-      showToast("Reminder scheduled successfully!");
-    } catch (error) {
-      console.error(error);
-    }
+      showToast("Protocol scheduled");
+    } catch (error) { console.error(error); }
   };
 
   const toggleTaken = async (reminder) => {
@@ -87,116 +70,141 @@ const MedicineReminder = () => {
         taken: !reminder.taken,
         lastTaken: !reminder.taken ? serverTimestamp() : null,
       });
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) { console.error(error); }
   };
 
   const deleteReminder = async (id) => {
     try {
       await deleteDoc(doc(db, "medicine_reminders", id));
-      showToast("Reminder deleted.");
-    } catch (error) {
-      console.error(error);
-    }
+      showToast("Protocol removed");
+    } catch (error) { console.error(error); }
   };
 
   const getTimeIcon = (time) => {
     const hour = parseInt(time.split(":")[0]);
-    if (hour < 12) return <FiSunrise className="text-orange-400" />;
-    if (hour < 18) return <FiSun className="text-yellow-500" />;
-    return <FiMoon className="text-indigo-400" />;
+    if (hour < 12) return <Sunrise className="text-orange-400" size={32} />;
+    if (hour < 18) return <Sun className="text-yellow-500" size={32} />;
+    return <Moon className="text-indigo-400" size={32} />;
+  };
+
+  const getWeekDays = () => {
+    const days = [];
+    const today = new Date();
+    for (let i = -3; i <= 3; i++) {
+      const d = new Date();
+      d.setDate(today.getDate() + i);
+      days.push({
+        name: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        num: d.getDate(),
+        isToday: i === 0
+      });
+    }
+    return days;
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="medicine-reminder-page">
+      <div className="page-container">
 
-        {/* Header */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <h1 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white mb-2 flex items-center gap-3">
-              <FiClock className="text-blue-600" /> MedSchedule
-            </h1>
-            <p className="text-slate-500 font-medium">Manage your daily medication and health rituals.</p>
-          </div>
-          <button
+        <header className="ai-module-header">
+          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
+            <h1 className="text-main"><Activity className="text-primary" size={32} /> MedSchedule AI</h1>
+            <p>Pharmaceutical administration protocols and adherence tracking.</p>
+          </motion.div>
+          <motion.button
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
             onClick={() => setShowAdd(true)}
-            className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-600/20 flex items-center gap-2 hover:bg-blue-700 transition-all"
+            className="btn-primary"
           >
-            <FiPlus /> ADD MEDICINE
-          </button>
+            <Plus size={18} /> Schedule Med
+          </motion.button>
         </header>
 
-        {/* Schedule Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12">
 
-          {/* Calendar Sidebar */}
-          <div className="md:col-span-4 space-y-6">
-            <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-black text-slate-900 dark:text-white">Calendar</h3>
-                <FiCalendar className="text-blue-600" />
+          <aside className="lg:col-span-4 space-y-8">
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="calendar-card">
+              <div className="calendar-header">
+                <h3 className="text-lg font-black text-main">Chronometer</h3>
+                <CalendarIcon className="text-primary" size={20} />
               </div>
-              <div className="grid grid-cols-7 gap-2 text-center">
-                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
-                  <span key={d} className="text-[10px] font-black text-slate-400 uppercase">{d}</span>
-                ))}
-                {Array.from({ length: 31 }).map((_, i) => (
-                  <div key={i} className={`aspect-square flex items-center justify-center text-xs font-bold rounded-xl cursor-pointer transition-all ${i + 1 === new Date().getDate() ? "bg-blue-600 text-white" : "hover:bg-slate-100 dark:hover:bg-slate-800"}`}>
-                    {i + 1}
+              <div className="grid grid-cols-7 gap-2">
+                {getWeekDays().map((d, i) => (
+                  <div key={i} className={`day-slot ${d.isToday ? 'active' : ''}`}>
+                    <span>{d.name}</span>
+                    <strong>{d.num}</strong>
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-blue-600 p-8 rounded-[2.5rem] text-white space-y-4 relative overflow-hidden">
-               <FiZap className="text-4xl opacity-20 absolute -right-4 -bottom-4 rotate-12" />
-               <h4 className="text-xl font-black">AI Insights</h4>
-               <p className="text-blue-100 text-sm font-medium">Based on your logs, morning doses are 95% consistent. Keep it up!</p>
-            </div>
-          </div>
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="insight-card">
+              <div className="insight-glow"></div>
+              <div className="relative z-10">
+                <h4 className="text-xl font-black mb-8 flex items-center gap-3"><Zap className="text-primary" size={24} /> Bio-Insights</h4>
 
-          {/* Reminders List */}
-          <div className="md:col-span-8 space-y-4">
-            <AnimatePresence>
-              {reminders.map((med) => (
+                <div className="stat-item">
+                  <div className="stat-circle"><TrendingUp size={20} /></div>
+                  <div className="stat-info">
+                    <span>Adherence</span>
+                    <strong>94.8%</strong>
+                  </div>
+                </div>
+
+                <div className="stat-item">
+                  <div className="stat-circle"><Bell size={20} /></div>
+                  <div className="stat-info">
+                    <span>Next Due</span>
+                    <strong>14:30 PM</strong>
+                  </div>
+                </div>
+
+                <p className="text-slate-400 text-sm mt-8 leading-relaxed font-medium">Protocol adherence is optimal. Gemini AI confirms therapeutic stability based on current dosing consistency.</p>
+              </div>
+            </motion.div>
+          </aside>
+
+          <main className="lg:col-span-8 space-y-6">
+            <AnimatePresence mode="popLayout">
+              {reminders.map((med, index) => (
                 <motion.div
                   key={med.id}
                   layout
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className={`bg-white dark:bg-slate-900 p-6 rounded-[2rem] border transition-all flex items-center gap-6 group ${med.taken ? "border-emerald-200 dark:border-emerald-900/30 opacity-60" : "border-slate-200 dark:border-slate-800 shadow-sm"}`}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ delay: index * 0.05 }}
+                  className={`medicine-card-premium ${med.taken ? 'taken' : ''}`}
                 >
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${med.taken ? "bg-emerald-100 text-emerald-600" : "bg-blue-50 dark:bg-blue-900/20 text-blue-600"}`}>
+                  <div className="icon-container">
                     {getTimeIcon(med.time)}
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className={`text-xl font-black truncate ${med.taken ? "text-slate-400 line-through" : "text-slate-900 dark:text-white"}`}>
-                        {med.name}
-                      </h4>
-                      {med.taken && <FiCheckCircle className="text-emerald-500" />}
+                  <div className="flex-1 med-info">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h4 className={med.taken ? 'line-through opacity-50' : ''}>{med.name}</h4>
+                      {med.taken && <CheckCircle className="text-primary" size={18} />}
                     </div>
-                    <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                      <FiClock className="text-blue-500" /> {med.time} • {med.dosage} • {med.frequency}
-                    </p>
+                    <div className="med-meta">
+                       <span className="meta-pill"><Clock size={12} /> {med.time}</span>
+                       <span className="meta-pill"><Pill size={12} /> {med.dosage}</span>
+                       <span className="meta-pill"><Activity size={12} /> {med.frequency}</span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <button
                       onClick={() => toggleTaken(med)}
-                      className={`px-6 py-3 rounded-xl font-black text-xs transition-all ${med.taken ? "bg-emerald-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-600 hover:text-white"}`}
+                      className={`btn-action-med ${med.taken ? 'completed' : 'mark'}`}
                     >
-                      {med.taken ? "TAKEN" : "MARK TAKEN"}
+                      {med.taken ? "Completed" : "Mark Taken"}
                     </button>
                     <button
                       onClick={() => deleteReminder(med.id)}
-                      className="p-3 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                      className="p-3 text-muted hover:text-red-500 transition-all rounded-xl hover:bg-red-50"
                     >
-                      <FiTrash2 />
+                       <Trash2 size={20} />
                     </button>
                   </div>
                 </motion.div>
@@ -204,59 +212,56 @@ const MedicineReminder = () => {
             </AnimatePresence>
 
             {reminders.length === 0 && (
-              <div className="py-20 text-center bg-white dark:bg-slate-900 rounded-[2.5rem] border-4 border-dashed border-slate-100 dark:border-slate-800">
-                <FiBell size={48} className="mx-auto text-slate-200 mb-4" />
-                <h3 className="text-2xl font-black text-slate-400">No Reminders Set</h3>
-                <p className="text-slate-400 mt-2">Add your first medicine to stay on top of your health.</p>
-              </div>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} className="py-32 text-center card border-dashed border-2 bg-transparent shadow-none">
+                <Bell size={64} className="mx-auto text-muted mb-6" />
+                <h3 className="text-2xl font-black uppercase tracking-[4px]">No Protocols Active</h3>
+                <p className="text-sm font-bold text-muted mt-2">Initialize your medication schedule to sync with AI Health hub.</p>
+              </motion.div>
             )}
-          </div>
+          </main>
         </div>
 
-        {/* Add Modal */}
-        {showAdd && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white dark:bg-slate-900 w-full max-w-md rounded-[2.5rem] p-10 relative">
-              <button onClick={() => setShowAdd(false)} className="absolute top-6 right-6 text-slate-400 hover:text-slate-900 dark:hover:text-white"><FiPlus className="rotate-45 text-2xl" /></button>
-              <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter">Schedule Med</h2>
-
-              <form onSubmit={handleAdd} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest px-1">Medicine Name</label>
-                  <input type="text" required placeholder="e.g. Paracetamol" className="w-full bg-slate-50 dark:bg-slate-950 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-blue-500 outline-none" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest px-1">Time</label>
-                    <input type="time" required className="w-full bg-slate-50 dark:bg-slate-950 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-blue-500 outline-none" value={formData.time} onChange={e => setFormData({...formData, time: e.target.value})} />
+        <AnimatePresence>
+          {showAdd && (
+            <div className="modal-overlay fixed inset-0 z-[1100] flex items-center justify-center p-6 bg-slate-950 bg-opacity-90 backdrop-blur-xl">
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="card w-full max-w-lg p-10 md:p-14 relative border-none shadow-premium rounded-[40px]">
+                <button onClick={() => setShowAdd(false)} className="absolute top-8 right-8 text-muted hover:text-main p-2 rounded-xl hover:bg-bg-color transition-all"><X size={28} /></button>
+                <h2 className="text-4xl font-black mb-10 tracking-tighter">Schedule Med</h2>
+                <form onSubmit={handleAdd} className="space-y-8">
+                  <div className="form-group">
+                    <label>Identification</label>
+                    <input type="text" required placeholder="Molecular / Compound name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest px-1">Dosage</label>
-                    <input type="text" placeholder="e.g. 500mg" className="w-full bg-slate-50 dark:bg-slate-950 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-blue-500 outline-none" value={formData.dosage} onChange={e => setFormData({...formData, dosage: e.target.value})} />
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="form-group">
+                      <label>Administer Time</label>
+                      <input type="time" required value={formData.time} onChange={e => setFormData({...formData, time: e.target.value})} />
+                    </div>
+                    <div className="form-group">
+                      <label>Dosage Unit</label>
+                      <input type="text" placeholder="e.g. 500mg / 5ml" value={formData.dosage} onChange={e => setFormData({...formData, dosage: e.target.value})} />
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest px-1">Frequency</label>
-                  <select className="w-full bg-slate-50 dark:bg-slate-950 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-blue-500 outline-none" value={formData.frequency} onChange={e => setFormData({...formData, frequency: e.target.value})}>
-                    <option>Daily</option>
-                    <option>Weekly</option>
-                    <option>Monthly</option>
-                    <option>As Needed</option>
-                  </select>
-                </div>
-                <button type="submit" className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-600/20 hover:bg-blue-700 transition-all mt-4">
-                  SAVE REMINDER
-                </button>
-              </form>
-            </motion.div>
-          </div>
-        )}
+                  <div className="form-group">
+                    <label>Administer Frequency</label>
+                    <select value={formData.frequency} onChange={e => setFormData({...formData, frequency: e.target.value})}>
+                      <option>Daily</option>
+                      <option>Weekly</option>
+                      <option>Monthly</option>
+                      <option>As Required (S.O.S)</option>
+                    </select>
+                  </div>
+                  <button type="submit" className="btn-primary w-full py-6 rounded-[2rem] font-black shadow-2xl tracking-[2px]">COMMENCE PROTOCOL</button>
+                </form>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
-        {/* Toast */}
         <AnimatePresence>
           {toast && (
-            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }} className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-3 rounded-full font-bold text-sm z-50 shadow-2xl">
-              {toast}
+            <motion.div initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 80, opacity: 0 }} className="fixed bottom-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-xs tracking-widest z-[1200] shadow-premium flex items-center gap-3">
+              <CheckCircle size={16} className="text-primary" /> {toast.toUpperCase()}
             </motion.div>
           )}
         </AnimatePresence>

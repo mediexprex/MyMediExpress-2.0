@@ -1,110 +1,228 @@
 .track-page {
-  padding: 80px 20px;
-  background: #f5fbff;
-  min-height: 80vh;
+  padding: 80px 20px 120px;
+  background-color: var(--bg-color);
+  min-height: 100vh;
 }
 
-.track-page .container {
-  max-width: 900px;
-  margin: 0 auto;
+.track-hero h1 span {
+  color: var(--secondary-color);
 }
 
-.track-header {
-  text-align: center;
-  margin-bottom: 35px;
-}
-
-.track-icon {
-  font-size: 55px;
-  color: #2563eb;
-  margin-bottom: 15px;
-}
-
-.track-header h1 {
-  font-size: 2.2rem;
-  color: #1e293b;
-  margin-bottom: 10px;
-}
-
-.track-header p {
-  color: #64748b;
-  font-size: 1rem;
-}
-
-.track-form {
+.track-icon-badge {
+  width: 90px;
+  height: 90px;
+  border-radius: 32px;
+  background-color: rgba(14, 165, 233, 0.1);
   display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+}
+
+/* Form */
+.track-form-premium .track-input {
+  background-color: var(--bg-color);
+  border: 2px solid var(--border-color);
+  padding: 24px 80px 24px 30px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 24px;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.track-form-premium .track-input:focus {
+  border-color: var(--secondary-color);
+  background-color: white;
+  box-shadow: 0 0 0 6px rgba(14, 165, 233, 0.1);
+}
+
+.btn-search-node {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  bottom: 12px;
+  width: 54px;
+  background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+  color: white;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 15px rgba(14, 165, 233, 0.3);
+}
+
+.btn-search-node:hover {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 12px 20px rgba(14, 165, 233, 0.4);
+}
+
+/* Recent Cards */
+.recent-card-premium {
+  border-radius: 24px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+.recent-card-premium:hover {
+  border-color: var(--secondary-color);
+  background-color: white;
+  box-shadow: var(--shadow-md);
+  transform: translateX(5px);
+}
+
+/* Timeline Horizontal */
+.timeline-horizontal {
+  position: relative;
+  padding: 40px 0 20px;
+}
+
+.timeline-track {
+  position: absolute;
+  top: 72px;
+  left: 40px;
+  right: 40px;
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: 10px;
+}
+
+.timeline-progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 10px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.timeline-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 10;
+}
+
+.step-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 15px;
-  margin-bottom: 35px;
+  width: 100px;
 }
 
-.track-form input {
-  flex: 1;
-  padding: 14px 18px;
-  border: 1px solid #dbeafe;
-  border-radius: 10px;
-  font-size: 16px;
-  outline: none;
-  transition: 0.3s;
+.node-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--card-bg);
+  border: 3px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 22px;
+  transition: all 0.4s ease;
+  box-shadow: var(--shadow-sm);
 }
 
-.track-form input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 8px rgba(37, 99, 235, 0.15);
-}
-
-.not-found {
-  background: #fee2e2;
-  color: #dc2626;
-  padding: 16px;
-  border-radius: 10px;
+.node-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
   text-align: center;
-  font-weight: 600;
 }
 
-.order-result {
-  margin-top: 30px;
+.step-node.active .node-icon {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: white;
 }
 
-.order-result h2 {
-  text-align: center;
-  color: #1e293b;
-  margin-bottom: 25px;
+.step-node.active .node-label {
+  color: var(--text-main);
 }
 
-.result-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+.step-node.current .node-icon {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+  transform: scale(1.25);
 }
 
-.result-grid div {
-  background: white;
-  padding: 18px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
+/* Order Live Card */
+.live-pulse-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
 }
 
-.result-grid strong {
-  display: block;
-  color: #2563eb;
-  margin-bottom: 8px;
+.meta-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.result-grid p {
-  color: #334155;
-  word-break: break-word;
+.meta-box span {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+}
+
+.meta-box strong {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-main);
+}
+
+@media (max-width: 1024px) {
+  .timeline-track {
+    left: 30px;
+    right: 30px;
+  }
 }
 
 @media (max-width: 768px) {
-  .track-form {
+  .timeline-steps {
     flex-direction: column;
+    align-items: flex-start;
+    gap: 40px;
+    padding-left: 15px;
   }
-
-  .result-grid {
-    grid-template-columns: 1fr;
+  .timeline-track {
+    left: 42px;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    right: auto;
   }
-
-  .track-header h1 {
-    font-size: 1.8rem;
+  .timeline-progress {
+    width: 100% !important;
+    height: 0;
+    display: none;
+  }
+  .step-node {
+    flex-direction: row;
+    width: auto;
+    gap: 25px;
+  }
+  .node-label {
+    text-align: left;
+    font-size: 13px;
+  }
+  .node-icon {
+    width: 54px;
+    height: 54px;
+    font-size: 18px;
   }
 }
