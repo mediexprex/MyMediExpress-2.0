@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { HeartPulse, Mail, Phone, MapPin, Instagram, Twitter, Facebook, Linkedin } from "lucide-react";
+import { HeartPulse, Mail, Phone, MapPin } from "lucide-react";
+import { FaInstagram, FaFacebook, FaLinkedin, FaXTwitter } from "react-icons/fa6";
 
 function Footer() {
   return (
@@ -16,10 +17,10 @@ function Footer() {
               Your trusted partner for pharmaceutical fulfillment and chronological health monitoring. Synchronized with the global medical logistics network.
             </p>
             <div className="social-links">
-              <a href="#" className="social-btn"><Instagram size={18} /></a>
-              <a href="#" className="social-btn"><Twitter size={18} /></a>
-              <a href="#" className="social-btn"><Facebook size={18} /></a>
-              <a href="#" className="social-btn"><Linkedin size={18} /></a>
+              <a href="#" className="social-btn"><FaInstagram size={18} /></a>
+              <a href="#" className="social-btn"><FaXTwitter size={18} /></a>
+              <a href="#" className="social-btn"><FaFacebook size={18} /></a>
+              <a href="#" className="social-btn"><FaLinkedin size={18} /></a>
             </div>
           </div>
 

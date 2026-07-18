@@ -231,7 +231,7 @@ function OrderMedicine() {
           </div>
         </motion.section>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
